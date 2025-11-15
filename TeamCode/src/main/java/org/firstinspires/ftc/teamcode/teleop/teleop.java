@@ -1,19 +1,30 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 
+import static org.firstinspires.ftc.teamcode.autos.Autonomous.score;
+import static org.firstinspires.ftc.teamcode.subsystems.MecanumDrive.odo;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
+import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierLine;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ReadWriteFile;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Bot;
+import org.firstinspires.ftc.teamcode.commands.FollowPathCommand;
+import org.firstinspires.ftc.teamcode.pedropathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
@@ -23,6 +34,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterPivot;
 
 import java.io.File;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "TeleOp")
@@ -46,10 +58,7 @@ public class teleop extends CommandOpMode {
     private Claw claw;
     private ClawPivot clawPivot;
     private Arm arm;*/
-    /*private final Pose start = new Pose(33, 9.5, Math.toRadians(0));
-    private final Pose blue = new Pose(33, 125, Math.toRadians(0));
-    private final Pose red = new Pose(110, 125, Math.toRadians(0));
-    private final Pose white  = new Pose(110, 9.5, Math.toRadians(0));*/
+    private Pose posNow = new Pose(odo.getEncoderX(), odo.getEncoderY(), odo.getHeading(AngleUnit.RADIANS));
 
 
     public void initialize() {
@@ -66,6 +75,9 @@ public class teleop extends CommandOpMode {
 
         driverGamepad = new GamepadEx(gamepad1);
         operatorGamepad = new GamepadEx(gamepad2);
+
+        Follower f = Constants.createFollower(bot.hMap);
+        f.update();
 
         // drive region
 
@@ -108,10 +120,6 @@ public class teleop extends CommandOpMode {
         //turret = new Turret(bot);
         //turret.register();
 
-        /*new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
-                .whenActive(()-> elevator.goToHigh())
-                .whenInactive(()-> elevator.goToLow());*/
-
 
         register(drive);
 
@@ -145,10 +153,49 @@ public class teleop extends CommandOpMode {
         /*new GamepadButton(operatorGamepad, GamepadKeys.Button.LEFT_STICK_BUTTON)
                 .whenPressed(new InstantCommand(turret::resetEncoder, turret));*/
 
+        //go to shoot position
+        new GamepadButton(driverGamepad, GamepadKeys.Button.X)
+                .whenPressed(
+                        new FollowPathCommand(f, f.pathBuilder()
+                                .addPath(new BezierLine(posNow, score))
+                                .setLinearHeadingInterpolation(posNow.getHeading(),score.getHeading())
+                                .build()
+                        )
+                );
+
         //intake command
         new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
-                .whileHeld(new RunCommand(() -> intake.setPower(1.0), intake))
+                .whileHeld(new RunCommand(() -> intake.setPower(1), intake))
                 .whenReleased(new InstantCommand(() -> intake.setPower(0), intake));
+
+        //shooter command
+        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
+                .whenActive(()-> shooter.shootOn())
+                .whenInactive(()-> shooter.shootOff());
+
+        //indexer command
+        new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
+                .whileHeld(()->shooter.indexOn())
+                .whenReleased(()->shooter.indexOff());
+
+        //elevator command
+        /*new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
+                .whenActive(()-> elevator.goToHigh())
+                .whenInactive(()-> elevator.goToLow());*/
+
+        //pivot command
+        new GamepadButton(driverGamepad, GamepadKeys.Button.B).
+                toggleWhenPressed(
+                        new SequentialCommandGroup(
+                                new InstantCommand(()->{pivot.one();})
+                        )
+                );
+        new GamepadButton(driverGamepad, GamepadKeys.Button.B).
+                toggleWhenPressed(
+                new SequentialCommandGroup(
+                        new InstantCommand(()->{pivot.zero();})
+                )
+        );
 
         /*
         while (opModeInInit()){

@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.Bot;
 public class ShooterPivot implements Subsystem {
     private final Bot bot;
     private final Servo pivot;
-    boolean isZero = true;
 
     public ShooterPivot(Bot bot){
         this.bot = bot;
@@ -17,17 +16,10 @@ public class ShooterPivot implements Subsystem {
         pivot.setDirection(Servo.Direction.FORWARD);
         pivot.setPosition(0);
     }
-
-    @Override
-    public void periodic(){
-        if(bot.driver.gamepad.bWasPressed()){
-            if(isZero){
-                pivot.setPosition(1);
-                isZero = false;
-            } else{
-                pivot.setPosition(0);
-                isZero = true;
-            }
-        }
+    public void zero(){
+        pivot.setPosition(0);
+    }
+    public void one(){
+        pivot.setPosition(1);
     }
 }

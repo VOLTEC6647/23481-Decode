@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -75,7 +75,7 @@ public class Autonomous extends LinearOpMode {
                                 .setLinearHeadingInterpolation(score.getHeading(),preGrab1.getHeading())
                                 .build()
                         ),
-                        new ParallelCommandGroup(
+                        new ParallelRaceGroup(
                                 new FollowPathCommand(f, f.pathBuilder()
                                         .addPath(new BezierLine(preGrab1, grab1))
                                         .setLinearHeadingInterpolation(preGrab1.getHeading(),grab1.getHeading())
@@ -94,7 +94,7 @@ public class Autonomous extends LinearOpMode {
                                 .setLinearHeadingInterpolation(score.getHeading(),preGrab2.getHeading())
                                 .build()
                         ),
-                        new ParallelCommandGroup(
+                        new ParallelRaceGroup(
                                 new FollowPathCommand(f, f.pathBuilder()
                                         .addPath(new BezierLine(preGrab2, grab2))
                                         .setLinearHeadingInterpolation(preGrab2.getHeading(),grab2.getHeading())
@@ -122,7 +122,7 @@ public class Autonomous extends LinearOpMode {
                                 .setLinearHeadingInterpolation(score.getHeading(),preGrab1.getHeading())
                                 .build()
                         ),
-                        new ParallelCommandGroup(
+                        new ParallelRaceGroup(
                                 new FollowPathCommand(f, f.pathBuilder()
                                         .addPath(new BezierLine(preGrab1, grab1))
                                         .setLinearHeadingInterpolation(preGrab1.getHeading(),grab1.getHeading())
@@ -141,7 +141,7 @@ public class Autonomous extends LinearOpMode {
                                 .setLinearHeadingInterpolation(score.getHeading(),preGrab3.getHeading())
                                 .build()
                         ),
-                        new ParallelCommandGroup(
+                        new ParallelRaceGroup(
                                 new FollowPathCommand(f, f.pathBuilder()
                                         .addPath(new BezierLine(preGrab3, grab3))
                                         .setLinearHeadingInterpolation(preGrab3.getHeading(),grab3.getHeading())
