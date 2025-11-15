@@ -22,6 +22,4 @@ public class ShooterPivot implements Subsystem {
     public void one(){
         pivot.setPosition(1);
     }
-
-
 }

@@ -184,18 +184,8 @@ public class teleop extends CommandOpMode {
                 .whenInactive(()-> elevator.goToLow());*/
 
         //pivot command
-        new GamepadButton(driverGamepad, GamepadKeys.Button.B).
-                toggleWhenPressed(
-                        new SequentialCommandGroup(
-                                new InstantCommand(()->{pivot.one();})
-                        )
-                );
-        new GamepadButton(driverGamepad, GamepadKeys.Button.B).
-                toggleWhenPressed(
-                new SequentialCommandGroup(
-                        new InstantCommand(()->{pivot.zero();})
-                )
-        );
+        new GamepadButton(operatorGamepad, GamepadKeys.Button.B)
+                .toggleWhenPressed(new InstantCommand(()->pivot.one(), pivot), new InstantCommand(()->pivot.zero(), pivot));
 
         /*
         while (opModeInInit()){
