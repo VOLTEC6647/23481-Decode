@@ -1,30 +1,21 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 
-import static org.firstinspires.ftc.teamcode.autos.Autonomous.score;
-import static org.firstinspires.ftc.teamcode.subsystems.MecanumDrive.odo;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Bot;
-import org.firstinspires.ftc.teamcode.commands.FollowPathCommand;
-import org.firstinspires.ftc.teamcode.pedropathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
@@ -34,8 +25,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterPivot;
 
 import java.io.File;
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "TeleOp")
 public class teleop extends CommandOpMode {
@@ -58,7 +47,6 @@ public class teleop extends CommandOpMode {
     private Claw claw;
     private ClawPivot clawPivot;
     private Arm arm;*/
-    private Pose posNow = new Pose(odo.getEncoderX(), odo.getEncoderY(), odo.getHeading(AngleUnit.RADIANS));
 
 
     public void initialize() {
@@ -66,23 +54,15 @@ public class teleop extends CommandOpMode {
         CommandScheduler.getInstance().reset();
         FtcDashboard dashboard = FtcDashboard.getInstance();
 
-        /*follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(start);
-        follower.update();*/
-
 
         telem = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         driverGamepad = new GamepadEx(gamepad1);
         operatorGamepad = new GamepadEx(gamepad2);
 
-        Follower f = Constants.createFollower(bot.hMap);
-        f.update();
-
         // drive region
 
         bot = new Bot(telem, hardwareMap, driverGamepad, operatorGamepad);
-        //bot.getImu().resetYaw();
 
         File myFileName = AppUtil.getInstance().getSettingsFile("team.txt");
         String team = ReadWriteFile.readFile(myFileName);
@@ -152,16 +132,6 @@ public class teleop extends CommandOpMode {
         //reset turret position
         /*new GamepadButton(operatorGamepad, GamepadKeys.Button.LEFT_STICK_BUTTON)
                 .whenPressed(new InstantCommand(turret::resetEncoder, turret));*/
-
-        //go to shoot position
-        new GamepadButton(driverGamepad, GamepadKeys.Button.X)
-                .whenPressed(
-                        new FollowPathCommand(f, f.pathBuilder()
-                                .addPath(new BezierLine(posNow, score))
-                                .setLinearHeadingInterpolation(posNow.getHeading(),score.getHeading())
-                                .build()
-                        )
-                );
 
         //intake command
         new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
