@@ -114,10 +114,8 @@ public class teleop extends CommandOpMode {
         ));
 
         //chassis target-locked command
-        /*new GamepadButton(driverGamepad, GamepadKeys.Button.A)
-                .whenPressed(()-> {
-                    MecanumDrive.isTargetLocked = !MecanumDrive.isTargetLocked;
-                });*/
+        new GamepadButton(driverGamepad, GamepadKeys.Button.A)
+                .whenPressed(()-> { MecanumDrive.isTargetLocked = !MecanumDrive.isTargetLocked; });
 
         //turret default command
         /*turret.setDefaultCommand(new RunCommand(
@@ -139,7 +137,7 @@ public class teleop extends CommandOpMode {
                 .whenReleased(new InstantCommand(() -> intake.setPower(0), intake));
 
         //shooter command
-        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
+        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
                 .whenActive(()-> shooter.shootOn())
                 .whenInactive(()-> shooter.shootOff());
 
@@ -149,7 +147,7 @@ public class teleop extends CommandOpMode {
                 .whenReleased(()->shooter.indexOff());
 
         //elevator command
-        /*new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
+        /*new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
                 .whenActive(()-> elevator.goToHigh())
                 .whenInactive(()-> elevator.goToLow());*/
 

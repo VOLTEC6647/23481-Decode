@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
@@ -44,11 +43,17 @@ public class ScissorElevator extends SubsystemBase {
             elevator.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         }
 
+        int currentPos = elevator.getCurrentPosition();
         double limitedPower = power * powerLimit;
+
+        if (limitedPower > 0 && currentPos >= high) {
+            limitedPower = 0;
+        }
+        else if (limitedPower < 0 && currentPos <= low) {
+            limitedPower = 0;
+        }
         elevator.setPower(limitedPower);
     }
-
-
     public int getCurrentPosition() {
         return elevator.getCurrentPosition();
     }
