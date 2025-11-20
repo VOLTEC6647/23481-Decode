@@ -20,7 +20,7 @@ public class MotorTest implements Subsystem {
         //backLeft = bot.hMap.get(DcMotorEx.class, "M2");
         //backRight = bot.hMap.get(DcMotorEx.class, "M3");
 
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);//ESTE VA EN FORWARD
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);//ESTE VA EN FORWARD PARA MOVER CHASSIS
         //backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         //frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         //backRight.setDirection(DcMotorSimple.Direction.REVERSE);

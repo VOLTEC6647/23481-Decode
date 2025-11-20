@@ -14,13 +14,15 @@ import org.firstinspires.ftc.teamcode.Bot;
 
 @Config
 public class Limelight extends SubsystemBase {
-    private Bot bot;
-    private Limelight3A limelight;
+    private final Bot bot;
+    private final Limelight3A limelight;
     public static double TURRET_HEADING_KP = 0.02;
     public static double MAX_TURRET_ROTATION_POWER = 0.5;
     public static double CHASSIS_HEADING_KP = 0.02;
     public static double MAX_CHASSIS_ROTATION_POWER = 0.5;
     private double turretCorrectionRotation = 0.0;
+
+    public static double targetCorrectionRotation = 0.0;
 
 
     public Limelight(Bot bot){
@@ -43,7 +45,7 @@ public class Limelight extends SubsystemBase {
         LLResult result = limelight.getLatestResult();
 
         turretCorrectionRotation = 0.0;
-        MecanumDrive.targetCorrectionRotation = 0.0;
+        targetCorrectionRotation = 0.0;
 
         if (result != null && result.isValid()) {
             Pose3D botpose = result.getBotpose();
@@ -59,7 +61,7 @@ public class Limelight extends SubsystemBase {
 
             double chassisPower = tx * CHASSIS_HEADING_KP;
             chassisPower = Math.min(Math.max(chassisPower, -MAX_CHASSIS_ROTATION_POWER), MAX_CHASSIS_ROTATION_POWER);
-            MecanumDrive.targetCorrectionRotation = -chassisPower;
+            targetCorrectionRotation = -chassisPower;
 
             double turretPower = tx * TURRET_HEADING_KP;
 
@@ -70,7 +72,7 @@ public class Limelight extends SubsystemBase {
             bot.telem.addData("Limelight | Target Visible", true);
             bot.telem.addData("Limelight | tx (Error Grados)", tx);
             bot.telem.addData("Limelight | Turret Correction", turretCorrectionRotation);
-            bot.telem.addData("Limelight | Chassis Correction", MecanumDrive.targetCorrectionRotation);
+            bot.telem.addData("Limelight | Chassis Correction", targetCorrectionRotation);
 
         } else {
             bot.telem.addData("Limelight | Target Visible", false);

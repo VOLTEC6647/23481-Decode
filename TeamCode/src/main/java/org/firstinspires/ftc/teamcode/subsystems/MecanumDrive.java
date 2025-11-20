@@ -31,7 +31,6 @@ public class MecanumDrive extends SubsystemBase {
     private boolean isEncoderMode = false;
 
     private final Follower follower;
-    public static double targetCorrectionRotation = 0.0;
     public static boolean isTargetLocked = false;
 
 
@@ -80,7 +79,7 @@ public class MecanumDrive extends SubsystemBase {
         bot.telem.addData("EncoderMode",isEncoderMode);
         bot.telem.addData("FieldCentric",fieldCentric);
         bot.telem.addData("TargetLocked", isTargetLocked);
-        bot.telem.addData("TargetCorrection", targetCorrectionRotation);
+        bot.telem.addData("TargetCorrection", Limelight.targetCorrectionRotation);
         bot.telem.addData("Heading", bot.getYaw());
         bot.telem.update();
     }
@@ -90,7 +89,7 @@ public class MecanumDrive extends SubsystemBase {
 
         double rotationPower;
         if (isTargetLocked) {
-            rotationPower = targetCorrectionRotation;
+            rotationPower = Limelight.targetCorrectionRotation;
         } else {
             rotationPower = rxInput * bot.rotMultiplier;
         }
