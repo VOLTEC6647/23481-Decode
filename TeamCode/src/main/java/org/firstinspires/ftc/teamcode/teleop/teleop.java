@@ -149,8 +149,8 @@ public class teleop extends CommandOpMode {
 
         //indexer command
         new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
-                .whileHeld(new InstantCommand(()->shooter.indexOn()))
-                .whenReleased(new InstantCommand(()->shooter.indexOff()));
+                .whileHeld(new RunCommand(()->shooter.indexOn(), shooter))
+                .whenReleased(new InstantCommand(()->shooter.indexOff(), shooter));
 
         //elevator command
         /*new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)

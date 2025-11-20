@@ -11,7 +11,6 @@ public class Shooter implements Subsystem {
     private final Bot bot;
     private final DcMotorEx shooter;
     private final CRServo indexer;
-    //private final DcMotorEx indexer;
 
 
     public Shooter(Bot bot){
@@ -19,18 +18,14 @@ public class Shooter implements Subsystem {
 
         shooter = bot.hMap.get(DcMotorEx.class,"shooter");
         indexer = bot.hMap.get(CRServo.class,"indexer");
-        //indexer = bot.hMap.get(DcMotorEx.class,"indexer");
 
         shooter.setPower(0);
         indexer.setPower(0);
 
-        shooter.setDirection(DcMotor.Direction.FORWARD);
-        indexer.setDirection(CRServo.Direction.FORWARD);
+        shooter.setDirection(DcMotor.Direction.REVERSE);
+        indexer.setDirection(CRServo.Direction.REVERSE);
 
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        bot.telem.addData("Status", "Initialized");
-        bot.telem.update();
     }
 
     public void shootOn(){
