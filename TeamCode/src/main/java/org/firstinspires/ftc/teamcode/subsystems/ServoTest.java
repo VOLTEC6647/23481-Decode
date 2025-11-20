@@ -2,14 +2,19 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Servo Test", group = "TeleOp")
+import org.firstinspires.ftc.teamcode.Bot;
+
 public class ServoTest implements Subsystem {
+    private final Bot bot;
     private final CRServo indexer;
 
-    public ServoTest(CRServo indexer) {
-        this.indexer = indexer;
+    public ServoTest(Bot bot) {
+        this.bot = bot;
+
+        indexer = bot.hMap.get(CRServo.class, "indexer");
     }
 
     @Override

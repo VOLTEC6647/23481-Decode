@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.follower.Follower;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.MotorTest;
 import org.firstinspires.ftc.teamcode.subsystems.ScissorElevator;
+import org.firstinspires.ftc.teamcode.subsystems.ServoTest;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterPivot;
 
@@ -34,7 +36,8 @@ public class teleop extends CommandOpMode {
     private GamepadEx driverGamepad;
     private GamepadEx operatorGamepad;
     private MecanumDrive drive;
-    private MotorTest test;
+    private MotorTest mTest;
+    private ServoTest sTest;
     private Limelight limelight;
     private ShooterPivot pivot;
     //private Turret turret;
@@ -75,8 +78,11 @@ public class teleop extends CommandOpMode {
             bot.setRotationOffset(Rotation2d.fromDegrees(0));
         }*/
 
-        //test = new MotorTest(bot);
-        //test.register();
+        //sTest = new ServoTest(bot);
+        //sTest.register();
+
+        //mTest = new MotorTest(bot);
+        //mTest.register();
 
         drive = new MecanumDrive(bot,follower);
         drive.register();
@@ -84,8 +90,8 @@ public class teleop extends CommandOpMode {
         //limelight = new Limelight(bot);
         //limelight.register();
 
-        //shooter = new Shooter(bot);
-        //shooter.register();
+        shooter = new Shooter(bot);
+        shooter.register();
 
         intake = new Intake(bot);
         intake.register();
@@ -138,18 +144,18 @@ public class teleop extends CommandOpMode {
 
         //shooter command
         new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
-                .whenActive(()-> shooter.shootOn())
-                .whenInactive(()-> shooter.shootOff());
+                .whenActive(new InstantCommand(()-> shooter.shootOn()))
+                .whenInactive(new InstantCommand(()-> shooter.shootOff()));
 
         //indexer command
         new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
-                .whileHeld(()->shooter.indexOn())
-                .whenReleased(()->shooter.indexOff());
+                .whileHeld(new InstantCommand(()->shooter.indexOn()))
+                .whenReleased(new InstantCommand(()->shooter.indexOff()));
 
         //elevator command
         /*new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
-                .whenActive(()-> elevator.goToHigh())
-                .whenInactive(()-> elevator.goToLow());*/
+                .whenActive(new InstantCommand(()-> elevator.goToHigh()))
+                .whenInactive(new InstantCommand(()-> elevator.goToLow()));*/
 
         //pivot command
         new GamepadButton(operatorGamepad, GamepadKeys.Button.B)
