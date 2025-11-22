@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Bot;
+import org.firstinspires.ftc.teamcode.teleop.teleop;
 
 @Config
 public class MecanumDrive extends SubsystemBase {
@@ -36,10 +37,9 @@ public class MecanumDrive extends SubsystemBase {
         return new Rotation2d(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
     }
 
-    public MecanumDrive(Bot bot, Follower follower) {
+    public MecanumDrive(Bot bot) {
         this.bot = bot;
-        this.limelight = new Limelight(bot);
-        this.limelight.register();
+        this.limelight = teleop.limelight;
 
         odo = bot.hMap.get(GoBildaPinpointDriver.class,"odo");
         odo.setOffsets(-82.66924000028, 110.830759999962, DistanceUnit.INCH);
@@ -77,6 +77,7 @@ public class MecanumDrive extends SubsystemBase {
 
         bot.telem.addData("FieldCentric",fieldCentric);
         bot.telem.addData("TargetLocked", isTargetLocked);
+        bot.telem.addData("Heading",odo.getHeading(AngleUnit.DEGREES));
         bot.telem.update();
     }
 

@@ -9,7 +9,7 @@ public class NewElevator extends SubsystemBase {
     private final Bot bot;
     private DcMotorEx rightElevator, leftElevator;
     private final int low = 0;
-    private final int high = 1500;
+    private final int high = 4000;
     private final double speed = 0.85;
     private final double powerLimit = 0.30;
     public NewElevator(Bot bot) {
@@ -17,7 +17,7 @@ public class NewElevator extends SubsystemBase {
         rightElevator = bot.hMap.get(DcMotorEx.class, "re");
         leftElevator = bot.hMap.get(DcMotorEx.class, "le");
 
-        rightElevator.setDirection(DcMotorEx.Direction.FORWARD);
+        rightElevator.setDirection(DcMotorEx.Direction.REVERSE);
         rightElevator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         leftElevator.setDirection(DcMotorEx.Direction.FORWARD);
         leftElevator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -36,6 +36,12 @@ public class NewElevator extends SubsystemBase {
         leftElevator.setTargetPosition(targetPos);
         leftElevator.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         leftElevator.setPower(speed);
+    }
+
+    @Override
+    public void periodic(){
+        bot.telem.addData("left", leftElevator.getCurrentPosition());
+        bot.telem.addData("right", rightElevator.getCurrentPosition());
     }
 
     public void goToLow() {

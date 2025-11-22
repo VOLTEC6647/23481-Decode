@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 public class AutoWall1 extends LinearOpMode {
 
     // Scoring Poses
-    public static Pose score = new Pose(55, 85, Math.toRadians(315));
+    public static Pose score = new Pose(55, 85, Math.toRadians(135));//315
     public static Pose start = new Pose(55, 9.5, Math.toRadians(90));
     public static Pose preGrab1  = new Pose(60, 80, Math.toRadians(180));
     public static Pose grab1  = new Pose(33.5, 80, Math.toRadians(180));

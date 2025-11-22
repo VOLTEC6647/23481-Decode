@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Bot;
 
@@ -19,7 +20,7 @@ public class Shooter implements Subsystem {
 
         shooter.setPower(0);
 
-        shooter.setDirection(DcMotor.Direction.REVERSE);
+        shooter.setDirection(DcMotor.Direction.FORWARD);
 
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }

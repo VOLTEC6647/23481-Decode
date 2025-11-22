@@ -37,9 +37,8 @@ public class teleop extends CommandOpMode {
     private GamepadEx driverGamepad;
     private GamepadEx operatorGamepad;
     private MecanumDrive drive;
-    private MotorTest mTest;
     private ServoTest sTest;
-    private Limelight limelight;
+    public static Limelight limelight;
     private ShooterPivot pivot;
     //private Turret turret;
     private Shooter shooter;
@@ -83,11 +82,8 @@ public class teleop extends CommandOpMode {
         //sTest = new ServoTest(bot);
         //sTest.register();
 
-        mTest = new MotorTest(bot);
-        mTest.register();
-
-        //drive = new MecanumDrive(bot,follower);
-        //drive.register();
+        drive = new MecanumDrive(bot);
+        drive.register();
 
         //limelight = new Limelight(bot);
         //limelight.register();
@@ -95,24 +91,24 @@ public class teleop extends CommandOpMode {
         //shooter = new Shooter(bot);
         //shooter.register();
 
-        //intake = new Intake(bot);
-        //intake.register();
+        intake = new Intake(bot);
+        intake.register();
 
-        //indexer = new Indexer(bot);
-        //indexer.register();
+        indexer = new Indexer(bot);
+        indexer.register();
 
         //pivot = new ShooterPivot(bot);
         //pivot.register();
 
-        /*elevator = new NewElevator(bot);
+        elevator = new NewElevator(bot);
         elevator.register();
-        elevator.goToLow();*/
+        //elevator.goToLow();
 
         //turret = new Turret(bot);
         //turret.register();
 
 
-        //register(drive);
+        register(drive);
 
         //chasis default command
         drive.setDefaultCommand(new RunCommand(
@@ -153,14 +149,15 @@ public class teleop extends CommandOpMode {
                 .whenInactive(new InstantCommand(()-> shooter.shootOff()));
 
         //indexer command
-        new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
+        new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
                 .whileHeld(new RunCommand(()->indexer.indexOn(), indexer))
                 .whenReleased(new InstantCommand(()->indexer.indexOff(), indexer));
 
         //elevator command
-        /*new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
-                .whenActive(new InstantCommand(()-> elevator.goToHigh()))
-                .whenInactive(new InstantCommand(()-> elevator.goToLow()));*/
+        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
+                .whenActive(new InstantCommand(()-> elevator.goToHigh(), elevator));
+        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)<0.1)
+                .whenActive(new InstantCommand(()-> elevator.goToLow(), elevator));
 
         //pivot command
         new GamepadButton(operatorGamepad, GamepadKeys.Button.B)

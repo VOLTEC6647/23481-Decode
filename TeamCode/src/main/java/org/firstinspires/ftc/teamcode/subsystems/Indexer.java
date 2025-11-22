@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Bot;
 
@@ -16,7 +17,7 @@ public class Indexer implements Subsystem {
 
         indexer.setPower(0);
 
-        indexer.setDirection(CRServo.Direction.REVERSE);
+        indexer.setDirection(CRServo.Direction.FORWARD);
     }
 
     public void indexOn(){
