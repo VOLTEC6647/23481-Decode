@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Bot;
+import org.firstinspires.ftc.teamcode.subsystems.Indexer;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
@@ -43,6 +44,7 @@ public class teleop extends CommandOpMode {
     //private Turret turret;
     private Shooter shooter;
     private Intake intake;
+    private Indexer indexer;
     private ScissorElevator elevator;
     /*private DiffClaw dClaw;
     private DiffClawUp diffClawUp;
@@ -96,6 +98,8 @@ public class teleop extends CommandOpMode {
         intake = new Intake(bot);
         intake.register();
 
+        indexer = new Indexer(bot);
+        indexer.register();
         //pivot = new ShooterPivot(bot);
         //pivot.register();
 
@@ -149,8 +153,8 @@ public class teleop extends CommandOpMode {
 
         //indexer command
         new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
-                .whileHeld(new RunCommand(()->shooter.indexOn(), shooter))
-                .whenReleased(new InstantCommand(()->shooter.indexOff(), shooter));
+                .whileHeld(new RunCommand(()->indexer.indexOn(), indexer))
+                .whenReleased(new InstantCommand(()->indexer.indexOff(), indexer));
 
         //elevator command
         /*new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
