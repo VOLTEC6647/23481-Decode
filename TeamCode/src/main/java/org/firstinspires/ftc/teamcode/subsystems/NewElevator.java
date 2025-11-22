@@ -46,33 +46,6 @@ public class NewElevator extends SubsystemBase {
         goToPosition(high);
     }
 
-    public void setManualPower(double power) {
-        if (rightElevator.getMode() == DcMotorEx.RunMode.RUN_TO_POSITION) {
-            rightElevator.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        }
-        if (leftElevator.getMode() == DcMotorEx.RunMode.RUN_TO_POSITION) {
-            leftElevator.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        }
-
-        double currentPosRight = rightElevator.getCurrentPosition();
-        double currentPosLeft = leftElevator.getCurrentPosition();
-        double limitedPower = power * powerLimit;
-
-        if (limitedPower > 0 && currentPosLeft >= high) {
-            limitedPower = 0;
-        }
-        else if (limitedPower < 0 && currentPosLeft <= low) {
-            limitedPower = 0;
-        }
-        if (limitedPower > 0 && currentPosRight >= high) {
-            limitedPower = 0;
-        }
-        else if (limitedPower < 0 && currentPosRight <= low) {
-            limitedPower = 0;
-        }
-        rightElevator.setPower(limitedPower);
-        leftElevator.setPower(limitedPower);
-    }
     public int getCurrentPositionRight() {
         return rightElevator.getCurrentPosition();
     }

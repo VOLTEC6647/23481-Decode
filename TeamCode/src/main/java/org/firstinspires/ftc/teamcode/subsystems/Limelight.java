@@ -19,16 +19,18 @@ public class Limelight extends SubsystemBase {
     public static double TURRET_HEADING_KP = 0.02;
     public static double MAX_TURRET_ROTATION_POWER = 0.5;
     public static double CHASSIS_HEADING_KP = 0.02;
-    public static double MAX_CHASSIS_ROTATION_POWER = 0.5;
     private double turretCorrectionRotation = 0.0;
 
-    public static double targetCorrectionRotation = 0.0;
+    private double tx = 0;
+    private double ty = 0;
+    private boolean hasTarget = false;
 
 
     public Limelight(Bot bot){
         this.bot = bot;
 
         limelight = bot.hMap.get(Limelight3A.class,"limelight");
+        bot.telem.setMsTransmissionInterval(11);
         limelight.pipelineSwitch(0);
         limelight.start();
     }
@@ -41,11 +43,45 @@ public class Limelight extends SubsystemBase {
     }
 
     @Override
-    public void periodic() {
+    public void periodic() {LLResult result = limelight.getLatestResult();
+
+        if (result != null && result.isValid()) {
+            hasTarget = true;
+            tx = result.getTx();
+            ty = result.getTy();
+
+            Pose3D botpose = result.getBotpose();
+            if (MecanumDrive.odo != null && botpose != null) {
+                MecanumDrive.odo.setPosition(new Pose2D(DistanceUnit.METER, botpose.getPosition().x, botpose.getPosition().y, AngleUnit.RADIANS, botpose.getOrientation().getYaw(AngleUnit.RADIANS)));
+            }
+        } else {
+            hasTarget = false;
+            tx = 0;
+            ty = 0;
+        }
+
+        bot.telem.addData("LL | Target", hasTarget);
+        bot.telem.addData("LL | tx", tx);
+    }
+    public boolean hasTarget() {
+        return hasTarget;
+    }
+
+    public double getTurnPower() {
+        if (!hasTarget) return 0;
+
+        double power = -tx * CHASSIS_HEADING_KP;
+
+        double MAX_POWER = 0.6;
+        return Math.min(Math.max(power, -MAX_POWER), MAX_POWER);
+    }
+}
+
+/*previous periodic:
+
         LLResult result = limelight.getLatestResult();
 
         turretCorrectionRotation = 0.0;
-        targetCorrectionRotation = 0.0;
 
         if (result != null && result.isValid()) {
             Pose3D botpose = result.getBotpose();
@@ -77,5 +113,4 @@ public class Limelight extends SubsystemBase {
         } else {
             bot.telem.addData("Limelight | Target Visible", false);
         }
-    }
-}
+ */

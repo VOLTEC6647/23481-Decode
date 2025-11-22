@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.Bot;
 @Config
 public class MecanumDrive extends SubsystemBase {
     private final Bot bot;
-
+    private final Limelight limelight;
     private IMU imu = null;
 
     private final DcMotorEx frontLeft, frontRight, backLeft, backRight;
@@ -29,8 +29,6 @@ public class MecanumDrive extends SubsystemBase {
     public static Pose2D pose2D;
 
     private boolean isEncoderMode = false;
-
-    private final Follower follower;
     public static boolean isTargetLocked = false;
 
 
@@ -40,7 +38,8 @@ public class MecanumDrive extends SubsystemBase {
 
     public MecanumDrive(Bot bot, Follower follower) {
         this.bot = bot;
-        this.follower = follower;
+        this.limelight = new Limelight(bot);
+        this.limelight.register();
 
         odo = bot.hMap.get(GoBildaPinpointDriver.class,"odo");
         odo.setOffsets(-82.66924000028, 110.830759999962, DistanceUnit.INCH);
@@ -76,11 +75,8 @@ public class MecanumDrive extends SubsystemBase {
         odo.update();
         pose = position;
 
-        bot.telem.addData("EncoderMode",isEncoderMode);
         bot.telem.addData("FieldCentric",fieldCentric);
         bot.telem.addData("TargetLocked", isTargetLocked);
-        bot.telem.addData("TargetCorrection", Limelight.targetCorrectionRotation);
-        bot.telem.addData("Heading", bot.getYaw());
         bot.telem.update();
     }
 
@@ -88,8 +84,8 @@ public class MecanumDrive extends SubsystemBase {
     public void drive(double xPower, double yPower, double rxInput) {
 
         double rotationPower;
-        if (isTargetLocked) {
-            rotationPower = Limelight.targetCorrectionRotation;
+        if (isTargetLocked && limelight.hasTarget()) {
+            rotationPower = limelight.getTurnPower();
         } else {
             rotationPower = rxInput * bot.rotMultiplier;
         }
