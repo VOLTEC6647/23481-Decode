@@ -1,0 +1,86 @@
+package org.firstinspires.ftc.teamcode.subsystems;
+
+import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+import org.firstinspires.ftc.teamcode.Bot;
+
+public class NewElevator extends SubsystemBase {
+    private final Bot bot;
+    private DcMotorEx rightElevator, leftElevator;
+    private final int low = 0;
+    private final int high = 1500;
+    private final double speed = 0.85;
+    private final double powerLimit = 0.30;
+    public NewElevator(Bot bot) {
+        this.bot = bot;
+        rightElevator = bot.hMap.get(DcMotorEx.class, "re");
+        leftElevator = bot.hMap.get(DcMotorEx.class, "le");
+
+        rightElevator.setDirection(DcMotorEx.Direction.FORWARD);
+        rightElevator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        leftElevator.setDirection(DcMotorEx.Direction.FORWARD);
+        leftElevator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        rightElevator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        rightElevator.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        leftElevator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        leftElevator.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void goToPosition(int targetPos) {
+        rightElevator.setTargetPosition(targetPos);
+        rightElevator.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        rightElevator.setPower(speed);
+
+        leftElevator.setTargetPosition(targetPos);
+        leftElevator.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        leftElevator.setPower(speed);
+    }
+
+    public void goToLow() {
+        goToPosition(low);
+    }
+
+    public void goToHigh() {
+        goToPosition(high);
+    }
+
+    public void setManualPower(double power) {
+        if (rightElevator.getMode() == DcMotorEx.RunMode.RUN_TO_POSITION) {
+            rightElevator.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        }
+        if (leftElevator.getMode() == DcMotorEx.RunMode.RUN_TO_POSITION) {
+            leftElevator.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        }
+
+        double currentPosRight = rightElevator.getCurrentPosition();
+        double currentPosLeft = leftElevator.getCurrentPosition();
+        double limitedPower = power * powerLimit;
+
+        if (limitedPower > 0 && currentPosLeft >= high) {
+            limitedPower = 0;
+        }
+        else if (limitedPower < 0 && currentPosLeft <= low) {
+            limitedPower = 0;
+        }
+        if (limitedPower > 0 && currentPosRight >= high) {
+            limitedPower = 0;
+        }
+        else if (limitedPower < 0 && currentPosRight <= low) {
+            limitedPower = 0;
+        }
+        rightElevator.setPower(limitedPower);
+        leftElevator.setPower(limitedPower);
+    }
+    public int getCurrentPositionRight() {
+        return rightElevator.getCurrentPosition();
+    }
+    public int getCurrentPositionLeft() {
+        return leftElevator.getCurrentPosition();
+    }
+
+    /*public boolean isBusy() {
+        return elevator.isBusy();
+    }*/
+}

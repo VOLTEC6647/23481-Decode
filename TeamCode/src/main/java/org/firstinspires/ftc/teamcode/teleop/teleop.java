@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.MotorTest;
-import org.firstinspires.ftc.teamcode.subsystems.ScissorElevator;
+import org.firstinspires.ftc.teamcode.subsystems.NewElevator;
 import org.firstinspires.ftc.teamcode.subsystems.ServoTest;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterPivot;
@@ -45,7 +45,7 @@ public class teleop extends CommandOpMode {
     private Shooter shooter;
     private Intake intake;
     private Indexer indexer;
-    private ScissorElevator elevator;
+    private NewElevator elevator;
     /*private DiffClaw dClaw;
     private DiffClawUp diffClawUp;
     private ClawUp clawUp;
@@ -83,27 +83,28 @@ public class teleop extends CommandOpMode {
         //sTest = new ServoTest(bot);
         //sTest.register();
 
-        //mTest = new MotorTest(bot);
-        //mTest.register();
+        mTest = new MotorTest(bot);
+        mTest.register();
 
-        drive = new MecanumDrive(bot,follower);
-        drive.register();
+        //drive = new MecanumDrive(bot,follower);
+        //drive.register();
 
         //limelight = new Limelight(bot);
         //limelight.register();
 
-        shooter = new Shooter(bot);
-        shooter.register();
+        //shooter = new Shooter(bot);
+        //shooter.register();
 
-        intake = new Intake(bot);
-        intake.register();
+        //intake = new Intake(bot);
+        //intake.register();
 
-        indexer = new Indexer(bot);
-        indexer.register();
+        //indexer = new Indexer(bot);
+        //indexer.register();
+
         //pivot = new ShooterPivot(bot);
         //pivot.register();
 
-        /*elevator = new ScissorElevator(bot);
+        /*elevator = new NewElevator(bot);
         elevator.register();
         elevator.goToLow();*/
 
@@ -111,7 +112,7 @@ public class teleop extends CommandOpMode {
         //turret.register();
 
 
-        register(drive);
+        //register(drive);
 
         //chasis default command
         drive.setDefaultCommand(new RunCommand(
