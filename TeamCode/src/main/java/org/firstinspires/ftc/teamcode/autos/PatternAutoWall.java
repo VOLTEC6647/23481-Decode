@@ -30,10 +30,11 @@ public class PatternAutoWall extends LinearOpMode {
     // Scoring Poses
     public static Pose score = new Pose(55, 85, Math.toRadians(315));
     public static Pose wallStart = new Pose(55, 9.5, Math.toRadians(270));
-    public static Pose preGrab2  = new Pose(55, 85, Math.toRadians(180));
-    public static Pose grab2  = new Pose(25, 85, Math.toRadians(180));
+
     public static Pose preGrab1  = new Pose(55, 60, Math.toRadians(180));
     public static Pose grab1  = new Pose(25, 60, Math.toRadians(180));
+    public static Pose preGrab2  = new Pose(55, 85, Math.toRadians(180));
+    public static Pose grab2  = new Pose(25, 85, Math.toRadians(180));
     public static Pose preGrab3  = new Pose(70, 10, Math.toRadians(0));
     public static Pose grab3  = new Pose(134, 10, Math.toRadians(0));
     public static Pose postGrab3 = new Pose(70,20,Math.toRadians(315));
