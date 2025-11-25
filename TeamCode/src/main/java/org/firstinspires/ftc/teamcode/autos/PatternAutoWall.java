@@ -28,16 +28,16 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 public class PatternAutoWall extends LinearOpMode {
 
     // Scoring Poses
-    public static Pose score = new Pose(55, 85, Math.toRadians(315));
+    public static Pose score = new Pose(55, 90, Math.toRadians(315));//needs tuning
     public static Pose wallStart = new Pose(55, 9.5, Math.toRadians(270));
-
-    public static Pose preGrab1  = new Pose(55, 60, Math.toRadians(180));
-    public static Pose grab1  = new Pose(25, 60, Math.toRadians(180));
-    public static Pose preGrab2  = new Pose(40, 85, Math.toRadians(180));
-    public static Pose grab2  = new Pose(25, 85, Math.toRadians(180));
-    public static Pose preGrab3  = new Pose(70, 10, Math.toRadians(0));
-    public static Pose grab3  = new Pose(134, 10, Math.toRadians(0));
-    public static Pose postGrab3 = new Pose(70,20,Math.toRadians(315));
+    public static Pose preGrab1  = new Pose(55, 55, Math.toRadians(180));
+    public static Pose grab1  = new Pose(25, 55, Math.toRadians(180));
+    public static Pose preGrab2  = new Pose(45, 80, Math.toRadians(180));
+    public static Pose grab2  = new Pose(25, 80, Math.toRadians(180));
+    public static Pose preGrab3  = new Pose(70, 20, Math.toRadians(0));
+    public static Pose grab3  = new Pose(134, 20, Math.toRadians(0));
+    public static Pose postGrab3 = new Pose(70,30,Math.toRadians(315));
+    public static Pose end = new Pose(70,70,Math.toRadians(315));
     private Bot bot;
     private MultipleTelemetry telem;
     private GamepadEx driverGamepad;
@@ -132,9 +132,14 @@ public class PatternAutoWall extends LinearOpMode {
                                 .setLinearHeadingInterpolation(grab3.getHeading(),postGrab3.getHeading())
                                 .build()
                         ),
+                        new FollowPathCommand(f,f.pathBuilder()
+                                .addPath(new BezierLine(postGrab3,end))
+                                .setLinearHeadingInterpolation(postGrab3.getHeading(),end.getHeading())
+                                .build()
+                        ),
                         new FollowPathCommand(f, f.pathBuilder()
-                                .addPath(new BezierLine(postGrab3, score))
-                                .setLinearHeadingInterpolation(postGrab3.getHeading(),score.getHeading())
+                                .addPath(new BezierLine(end, score))
+                                .setLinearHeadingInterpolation(end.getHeading(),score.getHeading())
                                 .build()
                         )
                 );

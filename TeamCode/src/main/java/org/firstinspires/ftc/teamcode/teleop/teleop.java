@@ -100,8 +100,8 @@ public class teleop extends CommandOpMode {
         //pivot = new ShooterPivot(bot);
         //pivot.register();
 
-        elevator = new NewElevator(bot);
-        elevator.register();
+        //elevator = new NewElevator(bot);
+        //elevator.register();
         //elevator.goToLow();
 
         //turret = new Turret(bot);
