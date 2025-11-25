@@ -30,7 +30,7 @@ public class PatternAutoGoal extends LinearOpMode {
     // Scoring Poses
     public static Pose score = new Pose(55, 85, Math.toRadians(315));
     public static Pose goalStart = new Pose(20, 120, Math.toRadians(325));
-    public static Pose preGrab2  = new Pose(55, 85, Math.toRadians(180));
+    public static Pose preGrab2  = new Pose(40, 85, Math.toRadians(180));
     public static Pose grab2  = new Pose(25, 85, Math.toRadians(180));
     public static Pose preGrab1  = new Pose(55, 60, Math.toRadians(180));
     public static Pose grab1  = new Pose(25, 60, Math.toRadians(180));
@@ -63,7 +63,7 @@ public class PatternAutoGoal extends LinearOpMode {
         intake.register();
 
 
-        SequentialCommandGroup auto =
+        SequentialCommandGroup goalAuto =
                 new SequentialCommandGroup(
                         new FollowPathCommand(f, f.pathBuilder()
                                 .addPath(new BezierLine(goalStart, score))
@@ -83,10 +83,10 @@ public class PatternAutoGoal extends LinearOpMode {
                                 )//,
                                 //new RunCommand(() -> intake.setPower(1.0), intake)
                         ),
-                        new SequentialCommandGroup(
-                                new WaitCommand(200)//,
-                                //new InstantCommand(()-> intake.setPower(0), intake)
-                        ),
+                        /*new SequentialCommandGroup(
+                                new WaitCommand(200),
+                                new InstantCommand(()-> intake.setPower(0), intake)
+                        ),*/
                         new FollowPathCommand(f, f.pathBuilder()
                                 .addPath(new BezierLine(grab1, score))
                                 .setLinearHeadingInterpolation(grab1.getHeading(),score.getHeading())
@@ -105,10 +105,10 @@ public class PatternAutoGoal extends LinearOpMode {
                                 )//,
                                 //new RunCommand(() -> intake.setPower(1.0), intake)
                         ),
-                        new SequentialCommandGroup(
+                        /*new SequentialCommandGroup(
                                 new WaitCommand(200),
                                 new InstantCommand(()-> intake.setPower(0), intake)
-                        ),
+                        ),*/
                         new FollowPathCommand(f, f.pathBuilder()
                                 .addPath(new BezierLine(grab2, preGrab3))
                                 .setLinearHeadingInterpolation(grab2.getHeading(),preGrab3.getHeading())
@@ -122,10 +122,10 @@ public class PatternAutoGoal extends LinearOpMode {
                                 )//,
                                 //new RunCommand(() -> intake.setPower(1.0), intake)
                         ),
-                        new SequentialCommandGroup(
-                                new WaitCommand(200)//,
-                                //new InstantCommand(()-> intake.setPower(0), intake)
-                        ),
+                        /*new SequentialCommandGroup(
+                                new WaitCommand(200),
+                                new InstantCommand(()-> intake.setPower(0), intake)
+                        ),*/
                         new FollowPathCommand(f, f.pathBuilder()
                                 .addPath(new BezierLine(grab3, postGrab3))
                                 .setLinearHeadingInterpolation(grab3.getHeading(),postGrab3.getHeading())
@@ -141,7 +141,7 @@ public class PatternAutoGoal extends LinearOpMode {
         waitForStart();
 
         f.setMaxPower(10.0 / vs.getVoltage());
-        CommandScheduler.getInstance().schedule(auto);
+        CommandScheduler.getInstance().schedule(goalAuto);
 
         while (opModeIsActive()) {
             CommandScheduler.getInstance().run();

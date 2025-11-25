@@ -33,7 +33,7 @@ public class PatternAutoWall extends LinearOpMode {
 
     public static Pose preGrab1  = new Pose(55, 60, Math.toRadians(180));
     public static Pose grab1  = new Pose(25, 60, Math.toRadians(180));
-    public static Pose preGrab2  = new Pose(55, 85, Math.toRadians(180));
+    public static Pose preGrab2  = new Pose(40, 85, Math.toRadians(180));
     public static Pose grab2  = new Pose(25, 85, Math.toRadians(180));
     public static Pose preGrab3  = new Pose(70, 10, Math.toRadians(0));
     public static Pose grab3  = new Pose(134, 10, Math.toRadians(0));
@@ -64,7 +64,7 @@ public class PatternAutoWall extends LinearOpMode {
         intake.register();
 
 
-        SequentialCommandGroup auto =
+        SequentialCommandGroup wallAuto =
                 new SequentialCommandGroup(
                         new FollowPathCommand(f, f.pathBuilder()
                                 .addPath(new BezierLine(wallStart, score))
@@ -84,10 +84,10 @@ public class PatternAutoWall extends LinearOpMode {
                                 )//,
                                 //new RunCommand(() -> intake.setPower(1.0), intake)
                         ),
-                        new SequentialCommandGroup(
-                                new WaitCommand(200)//,
-                                //new InstantCommand(()-> intake.setPower(0), intake)
-                        ),
+                        /*new SequentialCommandGroup(
+                                new WaitCommand(200),
+                                new InstantCommand(()-> intake.setPower(0), intake)
+                        ),*/
                         new FollowPathCommand(f, f.pathBuilder()
                                 .addPath(new BezierLine(grab1, score))
                                 .setLinearHeadingInterpolation(grab1.getHeading(),score.getHeading())
@@ -106,10 +106,10 @@ public class PatternAutoWall extends LinearOpMode {
                                 )//,
                                 //new RunCommand(() -> intake.setPower(1.0), intake)
                         ),
-                        new SequentialCommandGroup(
+                        /*new SequentialCommandGroup(
                                 new WaitCommand(200),
                                 new InstantCommand(()-> intake.setPower(0), intake)
-                        ),
+                        ),*/
                         new FollowPathCommand(f, f.pathBuilder()
                                 .addPath(new BezierLine(grab2, preGrab3))
                                 .setLinearHeadingInterpolation(grab2.getHeading(),preGrab3.getHeading())
@@ -123,10 +123,10 @@ public class PatternAutoWall extends LinearOpMode {
                                 )//,
                                 //new RunCommand(() -> intake.setPower(1.0), intake)
                         ),
-                        new SequentialCommandGroup(
-                                new WaitCommand(200)//,
-                                //new InstantCommand(()-> intake.setPower(0), intake)
-                        ),
+                        /*new SequentialCommandGroup(
+                                new WaitCommand(200),
+                                new InstantCommand(()-> intake.setPower(0), intake)
+                        ),*/
                         new FollowPathCommand(f, f.pathBuilder()
                                 .addPath(new BezierLine(grab3, postGrab3))
                                 .setLinearHeadingInterpolation(grab3.getHeading(),postGrab3.getHeading())
@@ -142,7 +142,7 @@ public class PatternAutoWall extends LinearOpMode {
         waitForStart();
 
         f.setMaxPower(10.0 / vs.getVoltage());
-        CommandScheduler.getInstance().schedule(auto);
+        CommandScheduler.getInstance().schedule(wallAuto);
 
         while (opModeIsActive()) {
             CommandScheduler.getInstance().run();
