@@ -9,9 +9,8 @@ public class NewElevator extends SubsystemBase {
     private final Bot bot;
     private DcMotorEx rightElevator, leftElevator;
     private final int low = 0;
-    private final int high = 4000;
+    private final int high = 5000;
     private final double speed = 0.5;
-    private final double powerLimit = 0.30;
     public NewElevator(Bot bot) {
         this.bot = bot;
         rightElevator = bot.hMap.get(DcMotorEx.class, "re");
@@ -52,14 +51,14 @@ public class NewElevator extends SubsystemBase {
         goToPosition(high);
     }
 
-    public int getCurrentPositionRight() {
+    /*public int getCurrentPositionRight() {
         return rightElevator.getCurrentPosition();
     }
     public int getCurrentPositionLeft() {
         return leftElevator.getCurrentPosition();
     }
 
-    /*public boolean isBusy() {
+    public boolean isBusy() {
         return elevator.isBusy();
     }*/
 }
