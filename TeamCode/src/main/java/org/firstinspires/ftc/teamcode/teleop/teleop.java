@@ -82,11 +82,11 @@ public class teleop extends CommandOpMode {
         //sTest = new ServoTest(bot);
         //sTest.register();
 
+        limelight = new Limelight(bot);
+        limelight.register();
+
         drive = new MecanumDrive(bot);
         drive.register();
-
-        //limelight = new Limelight(bot);
-        //limelight.register();
 
         //shooter = new Shooter(bot);
         //shooter.register();
@@ -139,7 +139,7 @@ public class teleop extends CommandOpMode {
                 .whenPressed(new InstantCommand(turret::resetEncoder, turret));*/
 
         //intake command
-        new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
+        new GamepadButton(operatorGamepad, GamepadKeys.Button.RIGHT_BUMPER)
                 .whileHeld(new RunCommand(() -> intake.setPower(1), intake))
                 .whenReleased(new InstantCommand(() -> intake.setPower(0), intake));
 
@@ -149,14 +149,14 @@ public class teleop extends CommandOpMode {
                 .whenInactive(new InstantCommand(()-> shooter.shootOff()));
 
         //indexer command
-        new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
+        new GamepadButton(operatorGamepad, GamepadKeys.Button.LEFT_BUMPER)
                 .whileHeld(new RunCommand(()->indexer.indexOn(), indexer))
                 .whenReleased(new InstantCommand(()->indexer.indexOff(), indexer));
 
         //elevator command
-        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
+        new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
                 .whenActive(new InstantCommand(()-> elevator.goToHigh(), elevator));
-        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)<0.1)
+        new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)<0.1)
                 .whenActive(new InstantCommand(()-> elevator.goToLow(), elevator));
 
         //pivot command

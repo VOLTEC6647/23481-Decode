@@ -18,7 +18,7 @@ public class Intake implements Subsystem {
 
         intake = bot.hMap.get(DcMotorEx.class,"intake");
 
-        intake.setDirection(DcMotorEx.Direction.REVERSE);
+        intake.setDirection(DcMotorEx.Direction.FORWARD);
 
         intake.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
