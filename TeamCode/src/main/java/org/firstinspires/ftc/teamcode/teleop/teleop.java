@@ -12,11 +12,14 @@ import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Bot;
+import org.firstinspires.ftc.teamcode.commands.PositionHoldCommand;
+import org.firstinspires.ftc.teamcode.pedropathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Indexer;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Limelight;
@@ -45,6 +48,7 @@ public class teleop extends CommandOpMode {
     private Intake intake;
     private Indexer indexer;
     private NewElevator elevator;
+    public static Pose score = new Pose(55, 85, Math.toRadians(315));
     /*private DiffClaw dClaw;
     private DiffClawUp diffClawUp;
     private ClawUp clawUp;
@@ -67,6 +71,9 @@ public class teleop extends CommandOpMode {
         // drive region
 
         bot = new Bot(telem, hardwareMap, driverGamepad, operatorGamepad);
+
+        follower = Constants.createFollower(bot.hMap);
+        follower.update();
 
         File myFileName = AppUtil.getInstance().getSettingsFile("team.txt");
         String team = ReadWriteFile.readFile(myFileName);
@@ -162,6 +169,14 @@ public class teleop extends CommandOpMode {
         //pivot command
         new GamepadButton(operatorGamepad, GamepadKeys.Button.B)
                 .toggleWhenPressed(new InstantCommand(()->pivot.one(), pivot), new InstantCommand(()->pivot.zero(), pivot));
+
+        //hold current position command
+        new GamepadButton(driverGamepad, GamepadKeys.Button.X)
+                .whileHeld(new PositionHoldCommand(bot, follower),true);
+
+        //hold different position command
+        new GamepadButton(driverGamepad, GamepadKeys.Button.Y)
+                .whileHeld(new PositionHoldCommand(bot, follower, score),true);
 
         /*
         while (opModeInInit()){

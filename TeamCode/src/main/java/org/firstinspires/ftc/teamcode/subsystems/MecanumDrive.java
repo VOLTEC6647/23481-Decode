@@ -23,7 +23,7 @@ public class MecanumDrive extends SubsystemBase {
     private final Limelight limelight;
     private IMU imu = null;
 
-    private final DcMotorEx frontLeft, frontRight, backLeft, backRight;
+    public final DcMotorEx frontLeft, frontRight, backLeft, backRight;
     public static GoBildaPinpointDriver odo;
     public static boolean fieldCentric = true;
     public static Pose pose;
@@ -125,6 +125,15 @@ public class MecanumDrive extends SubsystemBase {
         frontRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    public void setRawMotorPowers(double fl, double fr, double bl, double br) {
+        double[] powers = {fl, fr, bl, br};
+        double[] normalizedPowers = normalizeWheelSpeeds(powers);
+
+        frontLeft.setPower(normalizedPowers[0]);
+        frontRight.setPower(normalizedPowers[1]);
+        backLeft.setPower(normalizedPowers[2]);
+        backRight.setPower(normalizedPowers[3]);
+    }
 
     private double[] normalizeWheelSpeeds(double[] speeds) {
         if (largestAbsolute(speeds) > 1) {
