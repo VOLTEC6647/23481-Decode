@@ -6,13 +6,12 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.ParallelRaceGroup; // Import ParallelRaceGroup
-import com.arcrobotics.ftclib.command.RunCommand; // Import RunCommand
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
+import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand; // Import WaitCommand
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.pedropathing.follower.Follower;
-
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -27,18 +26,19 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous
-public class PointAuto extends LinearOpMode {
-
-    // Scoring Poses
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Blue Goal - Full Cycle")
+public class PatternAutoBlueGoal extends LinearOpMode {
     public static Pose score = new Pose(55, 85, Math.toRadians(315));
-    public static Pose start = new Pose(55, 9.5, Math.toRadians(270));
-    public static Pose preGrab1  = new Pose(60, 80, Math.toRadians(180));
-    public static Pose grab1  = new Pose(33.5, 80, Math.toRadians(180));
-    public static Pose preGrab2  = new Pose(60, 60, Math.toRadians(180));
-    public static Pose grab2  = new Pose(33.5, 60, Math.toRadians(180));
-    public static Pose preGrab3  = new Pose(60, 35, Math.toRadians(180));
-    public static Pose grab3  = new Pose(33.5, 35, Math.toRadians(180));
+    public static Pose goalStart = new Pose(20, 120, Math.toRadians(325));
+    public static Pose preGrab1  = new Pose(55, 50, Math.toRadians(180));
+    public static Pose grab1  = new Pose(25, 50, Math.toRadians(180));
+    public static Pose preGrab2  = new Pose(45, 75, Math.toRadians(180));
+    public static Pose grab2  = new Pose(25, 75, Math.toRadians(180));
+    public static Pose preGrab3  = new Pose(70, 15, Math.toRadians(0));
+    public static Pose grab3  = new Pose(134, 15, Math.toRadians(0));
+    public static Pose postGrab3 = new Pose(70,20,Math.toRadians(315));
+    public static Pose end = new Pose(70,70,Math.toRadians(315));
+
     private Bot bot;
     private MultipleTelemetry telem;
     private GamepadEx driverGamepad;
@@ -46,6 +46,7 @@ public class PointAuto extends LinearOpMode {
     private Intake intake;
     private Indexer indexer;
     private Shooter shooter;
+
     private SequentialCommandGroup getFireSequence(Shooter shooter, Indexer indexer) {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
@@ -73,7 +74,7 @@ public class PointAuto extends LinearOpMode {
         VoltageSensor vs = bot.hMap.voltageSensor.iterator().next();
 
         Follower f = Constants.createFollower(bot.hMap);
-        f.setStartingPose(start);
+        f.setStartingPose(goalStart);
         f.update();
 
         intake = new Intake(bot);
@@ -86,11 +87,11 @@ public class PointAuto extends LinearOpMode {
         shooter.register();
 
 
-        SequentialCommandGroup auto =
+        SequentialCommandGroup goalAuto =
                 new SequentialCommandGroup(
                         new FollowPathCommand(f, f.pathBuilder()
-                                .addPath(new BezierLine(start, score))
-                                .setLinearHeadingInterpolation(start.getHeading(), score.getHeading())
+                                .addPath(new BezierLine(goalStart, score))
+                                .setLinearHeadingInterpolation(goalStart.getHeading(), score.getHeading())
                                 .build()
                         ),
                         getFireSequence(shooter, indexer),
@@ -135,14 +136,8 @@ public class PointAuto extends LinearOpMode {
                                 new InstantCommand(()-> intake.setPower(0), intake)
                         ),
                         new FollowPathCommand(f, f.pathBuilder()
-                                .addPath(new BezierLine(grab2, score))
-                                .setLinearHeadingInterpolation(grab2.getHeading(),score.getHeading())
-                                .build()
-                        ),
-                        getFireSequence(shooter, indexer),
-                        new FollowPathCommand(f, f.pathBuilder()
-                                .addPath(new BezierLine(score, preGrab3))
-                                .setLinearHeadingInterpolation(score.getHeading(),preGrab3.getHeading())
+                                .addPath(new BezierLine(grab2, preGrab3))
+                                .setLinearHeadingInterpolation(grab2.getHeading(),preGrab3.getHeading())
                                 .build()
                         ),
                         new ParallelRaceGroup(
@@ -151,15 +146,25 @@ public class PointAuto extends LinearOpMode {
                                         .setLinearHeadingInterpolation(preGrab3.getHeading(),grab3.getHeading())
                                         .build()
                                 ),
-                                new RunCommand(()-> intake.setPower(1), intake)
+                                new RunCommand(() -> intake.setPower(1.0), intake)
                         ),
                         new SequentialCommandGroup(
                                 new WaitCommand(200),
                                 new InstantCommand(()-> intake.setPower(0), intake)
                         ),
                         new FollowPathCommand(f, f.pathBuilder()
-                                .addPath(new BezierLine(grab3, score))
-                                .setLinearHeadingInterpolation(grab3.getHeading(),score.getHeading())
+                                .addPath(new BezierLine(grab3, postGrab3))
+                                .setLinearHeadingInterpolation(grab3.getHeading(),postGrab3.getHeading())
+                                .build()
+                        ),
+                        new FollowPathCommand(f,f.pathBuilder()
+                                .addPath(new BezierLine(postGrab3,end))
+                                .setLinearHeadingInterpolation(postGrab3.getHeading(),end.getHeading())
+                                .build()
+                        ),
+                        new FollowPathCommand(f, f.pathBuilder()
+                                .addPath(new BezierLine(end, score))
+                                .setLinearHeadingInterpolation(end.getHeading(),score.getHeading())
                                 .build()
                         ),
                         getFireSequence(shooter, indexer)
@@ -168,7 +173,7 @@ public class PointAuto extends LinearOpMode {
         waitForStart();
 
         f.setMaxPower(10.0 / vs.getVoltage());
-        CommandScheduler.getInstance().schedule(auto);
+        CommandScheduler.getInstance().schedule(goalAuto);
 
         while (opModeIsActive()) {
             CommandScheduler.getInstance().run();

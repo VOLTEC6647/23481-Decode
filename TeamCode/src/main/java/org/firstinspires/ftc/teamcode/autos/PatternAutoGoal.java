@@ -62,7 +62,6 @@ public class PatternAutoGoal extends LinearOpMode {
         );
     }
 
-
     @Override
     public void runOpMode() {
         CommandScheduler.getInstance().reset();

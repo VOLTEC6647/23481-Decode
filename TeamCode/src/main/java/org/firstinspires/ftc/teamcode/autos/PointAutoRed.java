@@ -6,13 +6,12 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.ParallelRaceGroup; // Import ParallelRaceGroup
-import com.arcrobotics.ftclib.command.RunCommand; // Import RunCommand
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
+import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand; // Import WaitCommand
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.pedropathing.follower.Follower;
-
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -27,18 +26,19 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous
-public class PointAuto extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Red Point Auto")
+public class PointAutoRed extends LinearOpMode {
 
-    // Scoring Poses
-    public static Pose score = new Pose(55, 85, Math.toRadians(315));
-    public static Pose start = new Pose(55, 9.5, Math.toRadians(270));
-    public static Pose preGrab1  = new Pose(60, 80, Math.toRadians(180));
-    public static Pose grab1  = new Pose(33.5, 80, Math.toRadians(180));
-    public static Pose preGrab2  = new Pose(60, 60, Math.toRadians(180));
-    public static Pose grab2  = new Pose(33.5, 60, Math.toRadians(180));
-    public static Pose preGrab3  = new Pose(60, 35, Math.toRadians(180));
-    public static Pose grab3  = new Pose(33.5, 35, Math.toRadians(180));
+    // --- RED TEAM POSES ---
+    public static Pose score = new Pose(89, 85, Math.toRadians(225)); // Mirrored from (55, 85, 315)
+    public static Pose start = new Pose(89, 9.5, Math.toRadians(90)); // Mirrored from (55, 9.5, 270)
+    public static Pose preGrab1  = new Pose(84, 80, Math.toRadians(0)); // Mirrored from (60, 80, 180)
+    public static Pose grab1  = new Pose(110.5, 80, Math.toRadians(0)); // Mirrored from (33.5, 80, 180)
+    public static Pose preGrab2  = new Pose(84, 60, Math.toRadians(0)); // Mirrored from (60, 60, 180)
+    public static Pose grab2  = new Pose(110.5, 60, Math.toRadians(0)); // Mirrored from (33.5, 60, 180)
+    public static Pose preGrab3  = new Pose(84, 35, Math.toRadians(0)); // Mirrored from (60, 35, 180)
+    public static Pose grab3  = new Pose(110.5, 35, Math.toRadians(0)); // Mirrored from (33.5, 35, 180)
+
     private Bot bot;
     private MultipleTelemetry telem;
     private GamepadEx driverGamepad;
@@ -46,6 +46,7 @@ public class PointAuto extends LinearOpMode {
     private Intake intake;
     private Indexer indexer;
     private Shooter shooter;
+
     private SequentialCommandGroup getFireSequence(Shooter shooter, Indexer indexer) {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
