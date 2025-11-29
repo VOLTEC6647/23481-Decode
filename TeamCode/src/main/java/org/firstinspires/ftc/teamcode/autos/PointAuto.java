@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelRaceGroup; // Import ParallelRaceGroup
 import com.arcrobotics.ftclib.command.RunCommand; // Import RunCommand
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -20,7 +21,9 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.Bot;
 import org.firstinspires.ftc.teamcode.commands.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.pedropathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.Indexer;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 
 
 @Config
@@ -41,6 +44,21 @@ public class PointAuto extends LinearOpMode {
     private GamepadEx driverGamepad;
     private GamepadEx operatorGamepad;
     private Intake intake;
+    private Indexer indexer;
+    private Shooter shooter;
+    private SequentialCommandGroup getFireSequence(Shooter shooter, Indexer indexer) {
+        return new SequentialCommandGroup(
+                new ParallelCommandGroup(
+                        new InstantCommand(shooter::shootOn, shooter),
+                        new InstantCommand(indexer::indexOn, indexer)
+                ),
+                new WaitCommand(2000),
+                new ParallelCommandGroup(
+                        new InstantCommand(shooter::shootOff, shooter),
+                        new InstantCommand(indexer::indexOff, indexer)
+                )
+        );
+    }
 
 
     @Override
@@ -61,6 +79,12 @@ public class PointAuto extends LinearOpMode {
         intake = new Intake(bot);
         intake.register();
 
+        indexer = new Indexer(bot);
+        indexer.register();
+
+        shooter = new Shooter(bot);
+        shooter.register();
+
 
         SequentialCommandGroup auto =
                 new SequentialCommandGroup(
@@ -69,6 +93,7 @@ public class PointAuto extends LinearOpMode {
                                 .setLinearHeadingInterpolation(start.getHeading(), score.getHeading())
                                 .build()
                         ),
+                        getFireSequence(shooter, indexer),
                         new FollowPathCommand(f, f.pathBuilder()
                                 .addPath(new BezierLine(score, preGrab1))
                                 .setLinearHeadingInterpolation(score.getHeading(),preGrab1.getHeading())
@@ -91,6 +116,7 @@ public class PointAuto extends LinearOpMode {
                                 .setLinearHeadingInterpolation(grab1.getHeading(),score.getHeading())
                                 .build()
                         ),
+                        getFireSequence(shooter, indexer),
                         new FollowPathCommand(f, f.pathBuilder()
                                 .addPath(new BezierLine(score, preGrab2))
                                 .setLinearHeadingInterpolation(score.getHeading(),preGrab2.getHeading())
@@ -113,6 +139,7 @@ public class PointAuto extends LinearOpMode {
                                 .setLinearHeadingInterpolation(grab2.getHeading(),score.getHeading())
                                 .build()
                         ),
+                        getFireSequence(shooter, indexer),
                         new FollowPathCommand(f, f.pathBuilder()
                                 .addPath(new BezierLine(score, preGrab3))
                                 .setLinearHeadingInterpolation(score.getHeading(),preGrab3.getHeading())
@@ -134,7 +161,8 @@ public class PointAuto extends LinearOpMode {
                                 .addPath(new BezierLine(grab3, score))
                                 .setLinearHeadingInterpolation(grab3.getHeading(),score.getHeading())
                                 .build()
-                        )
+                        ),
+                        getFireSequence(shooter, indexer)
                 );
 
         waitForStart();
