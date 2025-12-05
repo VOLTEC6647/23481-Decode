@@ -151,9 +151,9 @@ public class teleop extends CommandOpMode {
                 .whenReleased(new InstantCommand(() -> intake.setPower(0), intake));
 
         //shooter command
-        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
+        /*new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
                 .whenActive(new InstantCommand(()-> shooter.shootOn()))
-                .whenInactive(new InstantCommand(()-> shooter.shootOff()));
+                .whenInactive(new InstantCommand(()-> shooter.shootOff()));*/
 
         //indexer command
         new GamepadButton(operatorGamepad, GamepadKeys.Button.LEFT_BUMPER)

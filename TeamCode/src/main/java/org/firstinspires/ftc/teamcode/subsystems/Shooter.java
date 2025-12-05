@@ -24,6 +24,9 @@ public class Shooter implements Subsystem {
 
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
+    public void periodic(){
+        shooter.setPower(1);
+    }
 
     public void shootOn(){
         shooter.setPower(1);

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 
@@ -10,6 +11,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.Bot;
+
+import java.util.List;
 
 
 @Config
@@ -24,7 +27,7 @@ public class Limelight extends SubsystemBase {
     private double tx = 0;
     private double ty = 0;
     private boolean hasTarget = false;
-
+    private int tagID = -1;
 
     public Limelight(Bot bot){
         this.bot = bot;
@@ -41,6 +44,9 @@ public class Limelight extends SubsystemBase {
         LLResult result = limelight.getLatestResult();
         return (result != null && result.isValid());
     }
+    public int getTagID(){
+        return tagID;
+    }
 
     @Override
     public void periodic() {LLResult result = limelight.getLatestResult();
@@ -49,6 +55,14 @@ public class Limelight extends SubsystemBase {
             hasTarget = true;
             tx = result.getTx();
             ty = result.getTy();
+            List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
+
+            if (!fiducials.isEmpty()) {
+                LLResultTypes.FiducialResult primaryTag = fiducials.get(0);
+                this.tagID = primaryTag.getFiducialId();
+            } else {
+                this.tagID = -1;
+            }
 
             Pose3D botpose = result.getBotpose();
             if (MecanumDrive.odo != null && botpose != null) {
@@ -58,10 +72,12 @@ public class Limelight extends SubsystemBase {
             hasTarget = false;
             tx = 0;
             ty = 0;
+            tagID = -1;
         }
 
         bot.telem.addData("LL | Target", hasTarget);
         bot.telem.addData("LL | tx", tx);
+        bot.telem.addData("LL | Tag ID", tagID);
     }
     public boolean hasTarget() {
         return hasTarget;
