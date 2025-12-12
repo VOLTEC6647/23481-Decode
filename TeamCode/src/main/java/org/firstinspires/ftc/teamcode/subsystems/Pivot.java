@@ -5,11 +5,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Bot;
 
-public class ShooterPivot implements Subsystem {
+public class Pivot implements Subsystem {
     private final Bot bot;
     private final Servo pivot;
 
-    public ShooterPivot(Bot bot){
+    public Pivot(Bot bot){
         this.bot = bot;
 
         pivot = bot.hMap.get(Servo.class,"pivot");

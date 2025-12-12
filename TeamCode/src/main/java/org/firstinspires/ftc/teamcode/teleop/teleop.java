@@ -26,9 +26,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.MotorTest;
 import org.firstinspires.ftc.teamcode.subsystems.NewElevator;
+import org.firstinspires.ftc.teamcode.subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.subsystems.ServoTest;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
-import org.firstinspires.ftc.teamcode.subsystems.ShooterPivot;
 
 import java.io.File;
 
@@ -42,7 +42,7 @@ public class teleop extends CommandOpMode {
     private MecanumDrive drive;
     private ServoTest sTest;
     public static Limelight limelight;
-    private ShooterPivot pivot;
+    private Pivot pivot;
     //private Turret turret;
     private Shooter shooter;
     private Intake intake;
@@ -86,17 +86,14 @@ public class teleop extends CommandOpMode {
             bot.setRotationOffset(Rotation2d.fromDegrees(0));
         }*/
 
-        //sTest = new ServoTest(bot);
-        //sTest.register();
-
         limelight = new Limelight(bot);
         limelight.register();
 
         drive = new MecanumDrive(bot);
         drive.register();
 
-        //shooter = new Shooter(bot);
-        //shooter.register();
+        shooter = new Shooter(bot);
+        shooter.register();
 
         intake = new Intake(bot);
         intake.register();
@@ -151,9 +148,9 @@ public class teleop extends CommandOpMode {
                 .whenReleased(new InstantCommand(() -> intake.setPower(0), intake));
 
         //shooter command
-        /*new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
+        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
                 .whenActive(new InstantCommand(()-> shooter.shootOn()))
-                .whenInactive(new InstantCommand(()-> shooter.shootOff()));*/
+                .whenInactive(new InstantCommand(()-> shooter.shootOff()));
 
         //indexer command
         new GamepadButton(operatorGamepad, GamepadKeys.Button.LEFT_BUMPER)
@@ -161,10 +158,10 @@ public class teleop extends CommandOpMode {
                 .whenReleased(new InstantCommand(()->indexer.indexOff(), indexer));
 
         //elevator command
-        new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
+        /*new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
                 .whenActive(new InstantCommand(()-> elevator.goToHigh(), elevator));
         new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)<0.1)
-                .whenActive(new InstantCommand(()-> elevator.goToLow(), elevator));
+                .whenActive(new InstantCommand(()-> elevator.goToLow(), elevator));*/
 
         //pivot command
         new GamepadButton(operatorGamepad, GamepadKeys.Button.B)

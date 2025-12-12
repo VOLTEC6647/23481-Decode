@@ -7,7 +7,8 @@ import org.firstinspires.ftc.teamcode.Bot;
 
 public class NewElevator extends SubsystemBase {
     private final Bot bot;
-    private DcMotorEx rightElevator, leftElevator;
+    private final DcMotorEx rightElevator;
+    private final DcMotorEx leftElevator;
     private final int low = 0;
     private final int high = 5000;
     private final double speed = 0.5;
