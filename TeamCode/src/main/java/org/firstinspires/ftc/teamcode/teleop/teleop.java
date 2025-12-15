@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.subsystems.NewElevator;
 import org.firstinspires.ftc.teamcode.subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.subsystems.ServoTest;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.utils.Drawing;
 
 import java.io.File;
 
@@ -181,10 +182,13 @@ public class teleop extends CommandOpMode {
         }
         //endregion
         */
+        Drawing.init();
     }
     @Override
     public void run() {
         //periodicBindings();
+        follower.update();
+        Drawing.drawDebug(follower);
         CommandScheduler.getInstance().run();
         telem.update();
     }
