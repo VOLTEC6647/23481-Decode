@@ -108,7 +108,7 @@ public class PositionHoldCommand extends CommandBase {
         double frontRightPower = robotCentricPowerY - robotCentricPowerX - powerH;
         double backRightPower = robotCentricPowerY + robotCentricPowerX - powerH;
 
-        bot.setRawMotorPowers(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+        //bot.setRawMotorPowers(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
     }
 
     @Override

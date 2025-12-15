@@ -40,8 +40,6 @@ public class NewElevator extends SubsystemBase {
 
     @Override
     public void periodic(){
-        bot.telem.addData("left", leftElevator.getCurrentPosition());
-        bot.telem.addData("right", rightElevator.getCurrentPosition());
     }
 
     public void goToLow() {

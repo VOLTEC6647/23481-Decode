@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.Bot;
 public class Shooter implements Subsystem {
     private final Bot bot;
     private final DcMotorEx shooter;
+    public double setPower = 0;
 
 
     public Shooter(Bot bot){
@@ -20,7 +21,7 @@ public class Shooter implements Subsystem {
 
         shooter.setPower(0);
 
-        shooter.setDirection(DcMotor.Direction.FORWARD);
+        shooter.setDirection(DcMotor.Direction.REVERSE);
 
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
@@ -33,5 +34,12 @@ public class Shooter implements Subsystem {
     }
     public void shootOff(){
         shooter.setPower(0);
+    }
+
+    public void setPower(double power){
+        setPower = power;
+        shooter.setPower(setPower);
+
+
     }
 }
