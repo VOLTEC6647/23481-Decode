@@ -39,16 +39,15 @@ public class teleop extends CommandOpMode {
     private MultipleTelemetry telem;
     private GamepadEx driverGamepad;
     private GamepadEx operatorGamepad;
-    //private MecanumDrive drive;
-    //private ServoTest sTest;
+    private MecanumDrive drive;
     public static Limelight limelight;
-    //private Pivot pivot;
-    //private Turret turret;
+    private Pivot pivot;
     private Shooter shooter;
-    //private Intake intake;
+    private Intake intake;
     private Indexer indexer;
-    //private NewElevator elevator;
+    private NewElevator elevator;
     public static Pose score = new Pose(55, 85, Math.toRadians(315));
+    //private Turret turret;
     /*private DiffClaw dClaw;
     private DiffClawUp diffClawUp;
     private ClawUp clawUp;
@@ -86,43 +85,43 @@ public class teleop extends CommandOpMode {
             bot.setRotationOffset(Rotation2d.fromDegrees(0));
         }*/
 
-        //limelight = new Limelight(bot);
-        //limelight.register();
+        limelight = new Limelight(bot);
+        limelight.register();
 
-        //drive = new MecanumDrive(bot);
-        //drive.register();
+        drive = new MecanumDrive(bot);
+        drive.register();
 
         shooter = new Shooter(bot);
         shooter.register();
 
-        //intake = new Intake(bot);
-        //intake.register();
+        intake = new Intake(bot);
+        intake.register();
 
         indexer = new Indexer(bot);
         indexer.register();
 
-        //pivot = new ShooterPivot(bot);
-        //pivot.register();
+        pivot = new Pivot(bot);
+        pivot.register();
 
-        //elevator = new NewElevator(bot);
-        //elevator.register();
-        //elevator.goToLow();
+        elevator = new NewElevator(bot);
+        elevator.register();
+        elevator.goToLow();
 
         //turret = new Turret(bot);
         //turret.register();
 
 
-        //register(drive);
+        register(drive);
 
         //chasis default command
-        /*drive.setDefaultCommand(new RunCommand(
+        drive.setDefaultCommand(new RunCommand(
                 () -> drive.drive(
                         driverGamepad.getLeftX() * bot.speed,
                         -driverGamepad.getLeftY() * bot.speed,
                         -driverGamepad.getRightX() * 0.8
                 ),
                 drive
-        ));*/
+        ));
 
         //chassis target-locked command
         new GamepadButton(driverGamepad, GamepadKeys.Button.A)
@@ -143,9 +142,9 @@ public class teleop extends CommandOpMode {
                 .whenPressed(new InstantCommand(turret::resetEncoder, turret));*/
 
         //intake command
-        /*new GamepadButton(operatorGamepad, GamepadKeys.Button.RIGHT_BUMPER)
+        new GamepadButton(operatorGamepad, GamepadKeys.Button.RIGHT_BUMPER)
                 .whileHeld(new RunCommand(() -> intake.setPower(1), intake))
-                .whenReleased(new InstantCommand(() -> intake.setPower(0), intake));*/
+                .whenReleased(new InstantCommand(() -> intake.setPower(0), intake));
 
         //shooter command
         new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
@@ -158,15 +157,15 @@ public class teleop extends CommandOpMode {
                 .whenReleased(new InstantCommand(()->indexer.indexOff(), indexer));
 
         //elevator command
-        /*new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
+        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
                 .whenActive(new InstantCommand(()-> elevator.goToHigh(), elevator));
-        new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)<0.1)
-                .whenActive(new InstantCommand(()-> elevator.goToLow(), elevator));*/
+        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)<0.1)
+                .whenActive(new InstantCommand(()-> elevator.goToLow(), elevator));
 
         //pivot command
-        /*new GamepadButton(operatorGamepad, GamepadKeys.Button.B)
+        new GamepadButton(operatorGamepad, GamepadKeys.Button.B)
                 .toggleWhenPressed(new InstantCommand(()->pivot.one(), pivot), new InstantCommand(()->pivot.zero(), pivot));
-*/
+
         //hold current position command
         new GamepadButton(driverGamepad, GamepadKeys.Button.X)
                 .whileHeld(new PositionHoldCommand(bot, follower),true);
