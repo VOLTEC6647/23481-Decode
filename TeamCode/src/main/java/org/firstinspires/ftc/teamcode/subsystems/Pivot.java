@@ -20,6 +20,6 @@ public class Pivot implements Subsystem {
         pivot.setPosition(0);
     }
     public void one(){
-        pivot.setPosition(1);
+        pivot.setPosition(0.3);
     }
 }

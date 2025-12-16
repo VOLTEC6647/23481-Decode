@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Bot;
 
@@ -17,9 +18,9 @@ public class NewElevator extends SubsystemBase {
         rightElevator = bot.hMap.get(DcMotorEx.class, "re");
         leftElevator = bot.hMap.get(DcMotorEx.class, "le");
 
-        rightElevator.setDirection(DcMotorEx.Direction.REVERSE);
+        rightElevator.setDirection(DcMotorEx.Direction.FORWARD);
         rightElevator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        leftElevator.setDirection(DcMotorEx.Direction.FORWARD);
+        leftElevator.setDirection(DcMotorEx.Direction.REVERSE);
         leftElevator.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         rightElevator.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);

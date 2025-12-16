@@ -7,6 +7,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 
 import org.firstinspires.ftc.teamcode.Bot;
+import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 
 /**
  * A command that uses PID control to hold the robot at a specific target Pose.
@@ -108,11 +109,10 @@ public class PositionHoldCommand extends CommandBase {
         double frontRightPower = robotCentricPowerY - robotCentricPowerX - powerH;
         double backRightPower = robotCentricPowerY + robotCentricPowerX - powerH;
 
-        //bot.setRawMotorPowers(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+        bot.setRawMotorPowers(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
     }
 
     @Override
     public void end(boolean interrupted) {
-        bot.setRawMotorPowers(0, 0, 0, 0);
-    }
+        MecanumDrive.getInstance().setRawMotorPowers(0,0,0,0);}
 }

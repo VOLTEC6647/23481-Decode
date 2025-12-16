@@ -37,8 +37,15 @@ public class MecanumDrive extends SubsystemBase {
         return new Rotation2d(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
     }
 
+    public static MecanumDrive instance;
+    public static MecanumDrive getInstance(){
+
+        return instance;
+    }
+
     public MecanumDrive(Bot bot) {
         this.bot = bot;
+        instance = this;
         this.limelight = teleop.limelight;
 
         odo = bot.hMap.get(GoBildaPinpointDriver.class,"odo");
