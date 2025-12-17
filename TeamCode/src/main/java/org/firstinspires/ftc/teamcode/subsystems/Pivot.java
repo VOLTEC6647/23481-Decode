@@ -13,13 +13,13 @@ public class Pivot implements Subsystem {
         this.bot = bot;
 
         pivot = bot.hMap.get(Servo.class,"pivot");
-        pivot.setDirection(Servo.Direction.FORWARD);
-        pivot.setPosition(0);
+        pivot.setDirection(Servo.Direction.REVERSE);
+        pivot.setPosition(0.3);
     }
     public void zero(){
-        pivot.setPosition(0);
+        pivot.setPosition(0.3);
     }
     public void one(){
-        pivot.setPosition(0.3);
+        pivot.setPosition(0.75);
     }
 }

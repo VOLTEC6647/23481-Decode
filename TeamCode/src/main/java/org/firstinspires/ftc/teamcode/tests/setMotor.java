@@ -40,7 +40,7 @@ public class setMotor extends CommandOpMode {
 
         bot = new Bot(telem, hardwareMap, driverGamepad, operatorGamepad);
 
-        shoot = new Shooter(bot);
+        shoot = new Shooter(hardwareMap,telemetry);
         shoot.register();
 
         index = new Indexer(bot);
@@ -65,7 +65,6 @@ public class setMotor extends CommandOpMode {
     public void run() {
         CommandScheduler.getInstance().run();
         index.setPower(indexPower);
-        shoot.setPower(shootPower);
 
 
 

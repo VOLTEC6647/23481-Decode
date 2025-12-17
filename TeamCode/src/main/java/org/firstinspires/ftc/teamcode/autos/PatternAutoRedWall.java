@@ -83,7 +83,7 @@ public class PatternAutoRedWall extends LinearOpMode {
         indexer = new Indexer(bot);
         indexer.register();
 
-        shooter = new Shooter(bot);
+        shooter = new Shooter(hardwareMap,telemetry);
         shooter.register();
 
 

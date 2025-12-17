@@ -43,7 +43,7 @@ public class teleop extends CommandOpMode {
     public static Limelight limelight;
     private Pivot pivot;
     private Shooter shooter;
-    private Intake intake;
+    //private Intake intake;
     private Indexer indexer;
     private NewElevator elevator;
     public static Pose score = new Pose(55, 85, Math.toRadians(315));
@@ -91,11 +91,11 @@ public class teleop extends CommandOpMode {
         drive = new MecanumDrive(bot);
         drive.register();
 
-        shooter = new Shooter(bot);
+        shooter = new Shooter(hardwareMap,telemetry);
         shooter.register();
 
-        intake = new Intake(bot);
-        intake.register();
+        //intake = new Intake(bot);
+        //intake.register();
 
         indexer = new Indexer(bot);
         indexer.register();
@@ -142,15 +142,16 @@ public class teleop extends CommandOpMode {
                 .whenPressed(new InstantCommand(turret::resetEncoder, turret));*/
 
         //intake command
-        new GamepadButton(operatorGamepad, GamepadKeys.Button.RIGHT_BUMPER)
+        /*new GamepadButton(operatorGamepad, GamepadKeys.Button.RIGHT_BUMPER)
                 .whileHeld(new RunCommand(() -> intake.setPower(1), intake))
                 .whenReleased(new InstantCommand(() -> intake.setPower(0), intake));
-
+*/
         //shooter command
-        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
-                .whenActive(new InstantCommand(()-> shooter.shootOn()))
-                .whenInactive(new InstantCommand(()-> shooter.shootOff()));
-
+        /*new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
+                .whenActive(new InstantCommand(()-> shooter.shootOn(),shooter));
+        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)<0.1)
+                .whenActive(new InstantCommand(()-> shooter.shootOff(),shooter));
+*/
         //indexer command
         new GamepadButton(operatorGamepad, GamepadKeys.Button.LEFT_BUMPER)
                 .whileHeld(new RunCommand(()->indexer.indexOn(), indexer))
@@ -173,6 +174,10 @@ public class teleop extends CommandOpMode {
         //hold score position command
         new GamepadButton(driverGamepad, GamepadKeys.Button.Y)
                 .whileHeld(new PositionHoldCommand(bot, follower, score),true);
+
+        new GamepadButton(operatorGamepad, GamepadKeys.Button.A)
+                .toggleWhenPressed(new InstantCommand(()->shooter.setVelocity(),shooter), new InstantCommand(()->shooter.shootOff(),shooter));
+
 
         /*
         while (opModeInInit()){
