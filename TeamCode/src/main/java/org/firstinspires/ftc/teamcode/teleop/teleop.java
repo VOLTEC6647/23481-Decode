@@ -43,7 +43,7 @@ public class teleop extends CommandOpMode {
     public static Limelight limelight;
     private Pivot pivot;
     private Shooter shooter;
-    //private Intake intake;
+    private Intake intake;
     private Indexer indexer;
     private NewElevator elevator;
     public static Pose score = new Pose(55, 85, Math.toRadians(315));
@@ -94,8 +94,8 @@ public class teleop extends CommandOpMode {
         shooter = new Shooter(hardwareMap,telemetry);
         shooter.register();
 
-        //intake = new Intake(bot);
-        //intake.register();
+        intake = new Intake(bot);
+        intake.register();
 
         indexer = new Indexer(bot);
         indexer.register();
@@ -142,25 +142,23 @@ public class teleop extends CommandOpMode {
                 .whenPressed(new InstantCommand(turret::resetEncoder, turret));*/
 
         //intake command
-        /*new GamepadButton(operatorGamepad, GamepadKeys.Button.RIGHT_BUMPER)
-                .whileHeld(new RunCommand(() -> intake.setPower(1), intake))
-                .whenReleased(new InstantCommand(() -> intake.setPower(0), intake));
-*/
+        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
+                .whenActive(new RunCommand(() -> intake.setPower(1), intake));
+        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)<0.1)
+                .whenActive(new InstantCommand(() -> intake.setPower(0), intake));
+
         //shooter command
-        /*new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
-                .whenActive(new InstantCommand(()-> shooter.shootOn(),shooter));
-        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)<0.1)
-                .whenActive(new InstantCommand(()-> shooter.shootOff(),shooter));
-*/
+        new GamepadButton(operatorGamepad, GamepadKeys.Button.A)
+                .toggleWhenPressed(new InstantCommand(()->shooter.shootOn(),shooter), new InstantCommand(()->shooter.shootOff(),shooter));
+
         //indexer command
         new GamepadButton(operatorGamepad, GamepadKeys.Button.LEFT_BUMPER)
-                .whileHeld(new RunCommand(()->indexer.indexOn(), indexer))
-                .whenReleased(new InstantCommand(()->indexer.indexOff(), indexer));
+                .toggleWhenPressed(new RunCommand(()->indexer.indexOn(), indexer),new InstantCommand(()->indexer.indexOff(), indexer));
 
         //elevator command
-        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
+        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
                 .whenActive(new InstantCommand(()-> elevator.goToHigh(), elevator));
-        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)<0.1)
+        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)<0.1)
                 .whenActive(new InstantCommand(()-> elevator.goToLow(), elevator));
 
         //pivot command
@@ -174,9 +172,6 @@ public class teleop extends CommandOpMode {
         //hold score position command
         new GamepadButton(driverGamepad, GamepadKeys.Button.Y)
                 .whileHeld(new PositionHoldCommand(bot, follower, score),true);
-
-        new GamepadButton(operatorGamepad, GamepadKeys.Button.A)
-                .toggleWhenPressed(new InstantCommand(()->shooter.setVelocity(),shooter), new InstantCommand(()->shooter.shootOff(),shooter));
 
 
         /*

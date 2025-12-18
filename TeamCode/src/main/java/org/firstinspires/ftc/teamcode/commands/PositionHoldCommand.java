@@ -21,33 +21,26 @@ public class PositionHoldCommand extends CommandBase {
 
     // --- PID COEFFICIENTS (Tune these values!) ---
     // Translational PID (X and Y)
-    public static double kPX = 0.05;
-    public static double kIX = 0.001;
-    public static double kDX = 0.001;
+    public static double kPX = 0.08;
+    public static double kIX = 0.0;
+    public static double kDX = 0.005;
 
-    public static double kPH = 0.8;
-    public static double kIH = 0.001;
-    public static double kDH = 0.001;
+    public static double kPH = 1.2;
+    public static double kIH = 0.0;
+    public static double kDH = 0.005;
 
-    private static final double MAX_POWER = 0.7;
+    private static final double MAX_POWER = 0.8;
 
-    private final PIDController xController;
-    private final PIDController yController;
-    private final PIDController hController;
-
+    private final PIDController xController = new PIDController(kPX, kIX, kDX);
+    private final PIDController yController = new PIDController(kPX, kIX, kDX);
+    private final PIDController hController = new PIDController(kPH, kIH, kDH);
     /**
      * Creates a command to hold the robot at its current pose.
      * @param bot The main robot object.
      * @param follower The PedroPathing follower instance.
      */
     public PositionHoldCommand(Bot bot, Follower follower) {
-        this.bot = bot;
-        this.follower = follower;
-        this.targetPose = follower.getPose();
-
-        xController = new PIDController(kPX, kIX, kDX);
-        yController = new PIDController(kPX, kIX, kDX);
-        hController = new PIDController(kPH, kIH, kDH);
+        this(bot, follower, follower.getPose());
     }
 
     /**
@@ -60,10 +53,7 @@ public class PositionHoldCommand extends CommandBase {
         this.bot = bot;
         this.follower = follower;
         this.targetPose = targetPose;
-
-        xController = new PIDController(kPX, kIX, kDX);
-        yController = new PIDController(kPX, kIX, kDX);
-        hController = new PIDController(kPH, kIH, kDH);
+        addRequirements(MecanumDrive.getInstance());
     }
 
     @Override
@@ -71,45 +61,34 @@ public class PositionHoldCommand extends CommandBase {
         xController.reset();
         yController.reset();
         hController.reset();
-
-        xController.setPID(kPX, kIX, kDX);
-        yController.setPID(kPX, kIX, kDX);
-        hController.setPID(kPH, kIH, kDH);
     }
 
     @Override
     public void execute() {
         Pose currentPose = follower.getPose();
-
-        double errorX = targetPose.getX() - currentPose.getX(); // Error along field X (Strafe)
-        double errorY = targetPose.getY() - currentPose.getY(); // Error along field Y (Forward)
-
-        double errorH = targetPose.getHeading() - currentPose.getHeading();
-        errorH = Math.atan2(Math.sin(errorH), Math.cos(errorH));
-
-        double powerFieldX = xController.calculate(0, errorX);
-        double powerFieldY = yController.calculate(0, errorY);
-        double powerH = hController.calculate(0, errorH);
-
         double heading = currentPose.getHeading();
-        double sin = Math.sin(heading);
-        double cos = Math.cos(heading);
 
-        // robotCentricPowerY = Forward/Backward power correction
-        // robotCentricPowerX = Strafe power correction
-        double robotCentricPowerX = powerFieldX * cos + powerFieldY * sin;
-        double robotCentricPowerY = powerFieldX * sin + powerFieldY * cos;
+        // Calculate Errors in Field Coordinates
+        double errorX = targetPose.getX() - currentPose.getX();
+        double errorY = targetPose.getY() - currentPose.getY();
+        double errorH = Math.atan2(Math.sin(targetPose.getHeading() - heading), Math.cos(targetPose.getHeading() - heading));
 
-        robotCentricPowerX = com.arcrobotics.ftclib.util.MathUtils.clamp(robotCentricPowerX, -MAX_POWER, MAX_POWER);
-        robotCentricPowerY = com.arcrobotics.ftclib.util.MathUtils.clamp(robotCentricPowerY, -MAX_POWER, MAX_POWER);
-        powerH = com.arcrobotics.ftclib.util.MathUtils.clamp(powerH, -MAX_POWER, MAX_POWER);
+        // Field-centric power demands
+        double pX = xController.calculate(0, errorX);
+        double pY = yController.calculate(0, errorY);
+        double pH = hController.calculate(0, errorH);
 
-        double frontLeftPower = robotCentricPowerY + robotCentricPowerX + powerH;
-        double backLeftPower = robotCentricPowerY - robotCentricPowerX + powerH;
-        double frontRightPower = robotCentricPowerY - robotCentricPowerX - powerH;
-        double backRightPower = robotCentricPowerY + robotCentricPowerX - powerH;
+        // Convert Field Power to Robot-Relative Power
+        // This is the Inverse Rotation Matrix
+        double rotX = pX * Math.cos(-heading) - pY * Math.sin(-heading);
+        double rotY = pX * Math.sin(-heading) + pY * Math.cos(-heading);
 
-        bot.setRawMotorPowers(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+        double fl = rotY + rotX + pH;
+        double bl = rotY - rotX + pH;
+        double fr = rotY - rotX - pH;
+        double br = rotY + rotX - pH;
+
+        MecanumDrive.getInstance().setRawMotorPowers(fl, fr, bl, br);
     }
 
     @Override

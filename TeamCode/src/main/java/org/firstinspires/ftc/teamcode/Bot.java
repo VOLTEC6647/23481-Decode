@@ -23,7 +23,7 @@ public class Bot extends Robot {
     public final GamepadEx opertator;
     public double speed = 1;
     public double rotMultiplier = 1;
-    //public final MecanumDrive drive;
+    public final MecanumDrive drive;
 
 
     public final ElapsedTime timer;
@@ -38,7 +38,7 @@ public class Bot extends Robot {
 
         imu = ImuGlobal.getImu(hMap);
 
-        //this.drive = new MecanumDrive(this);
+        this.drive = new MecanumDrive(this);
     }
     /**
      * Get the IMU object for the robot
@@ -69,7 +69,4 @@ public class Bot extends Robot {
      * Sends raw, un-processed power values directly to the drive motors via the drive subsystem.
      * This is used by commands that perform their own calculations (like PositionHoldCommand).
      */
-    public void setRawMotorPowers(double fl, double fr, double bl, double br) {
-        //drive.setRawMotorPowers(fl, fr, bl, br);
-    }
 }

@@ -25,9 +25,7 @@ public class MecanumDrive extends SubsystemBase {
 
     public final DcMotorEx frontLeft, frontRight, backLeft, backRight;
     public static GoBildaPinpointDriver odo;
-    public static boolean fieldCentric = true;
-    public static Pose pose;
-    public static Pose2D pose2D;
+    public static Pose pose = new Pose(0, 0, 0);
 
     private boolean isEncoderMode = false;
     public static boolean isTargetLocked = false;
@@ -53,11 +51,8 @@ public class MecanumDrive extends SubsystemBase {
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
-        if (pose == null) {
-            pose2D = new Pose2D(DistanceUnit.INCH,0,0,AngleUnit.RADIANS, 0);
-        }
-
-        odo.setPosition(pose2D);
+        Pose2D initialPose = new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.RADIANS, 0);
+        odo.setPosition(initialPose);
 
         frontLeft = bot.hMap.get(DcMotorEx.class, "M0");
         frontRight = bot.hMap.get(DcMotorEx.class, "M1");
@@ -77,14 +72,19 @@ public class MecanumDrive extends SubsystemBase {
 
     @Override
     public void periodic() {
-
-        Pose position = new Pose(odo.getEncoderX(), odo.getEncoderY(), odo.getHeading(AngleUnit.RADIANS));
         odo.update();
-        pose = position;
 
-        bot.telem.addData("FieldCentric",fieldCentric);
+        Pose2D currentPos = odo.getPosition();
+        pose = new Pose(
+                currentPos.getX(DistanceUnit.INCH),
+                currentPos.getY(DistanceUnit.INCH),
+                currentPos.getHeading(AngleUnit.RADIANS)
+        );
+
         bot.telem.addData("TargetLocked", isTargetLocked);
-        bot.telem.addData("Heading",odo.getHeading(AngleUnit.DEGREES));
+        bot.telem.addData("FieldCentric Heading", Math.toDegrees(pose.getHeading()));
+        bot.telem.addData("X (Inches)", pose.getX());
+        bot.telem.addData("Y (Inches)", pose.getY());
         bot.telem.update();
     }
 
@@ -92,7 +92,7 @@ public class MecanumDrive extends SubsystemBase {
     public void drive(double xPower, double yPower, double rxInput) {
 
         double rotationPower;
-        if (isTargetLocked && limelight.hasTarget()) {
+        if (isTargetLocked && limelight != null && limelight.hasTarget()) {
             rotationPower = limelight.getTurnPower();
         } else {
             rotationPower = rxInput * bot.rotMultiplier;
@@ -106,21 +106,15 @@ public class MecanumDrive extends SubsystemBase {
         rotX *= 1.1; // counteract imperfect strafe
 
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationPower), 1);
-        double frontLeftPower = (rotY + rotX + rotationPower) / denominator;
-        double backLeftPower = (rotY - rotX + rotationPower) / denominator;
-        double frontRightPower = (rotY - rotX - rotationPower) / denominator;
-        double backRightPower = (rotY + rotX - rotationPower) / denominator;
+        double fl = (rotY + rotX + rotationPower) / denominator;
+        double bl = (rotY - rotX + rotationPower) / denominator;
+        double fr = (rotY - rotX - rotationPower) / denominator;
+        double br = (rotY + rotX - rotationPower) / denominator;
 
-        double[] powers = {frontLeftPower, frontRightPower, backLeftPower, backRightPower};
-        double[] normalizedPowers = normalizeWheelSpeeds(powers);
-
-        frontLeft.setPower(normalizedPowers[0]);
-        frontRight.setPower(normalizedPowers[1]);
-        backLeft.setPower(normalizedPowers[2]);
-        backRight.setPower(normalizedPowers[3]);
+        setRawMotorPowers(fl,fr,bl,br);
     }
 
-    public void resetEncoders() {
+    /*public void resetEncoders() {
         backLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         backRight.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         frontLeft.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -130,19 +124,25 @@ public class MecanumDrive extends SubsystemBase {
         backRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         frontLeft.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
         frontRight.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-    }
+    }*/
 
     public void setRawMotorPowers(double fl, double fr, double bl, double br) {
-        double[] powers = {fl, fr, bl, br};
-        double[] normalizedPowers = normalizeWheelSpeeds(powers);
+        double max = Math.abs(fl);
+        max = Math.max(max, Math.abs(fr));
+        max = Math.max(max, Math.abs(bl));
+        max = Math.max(max, Math.abs(br));
 
-        frontLeft.setPower(normalizedPowers[0]);
-        frontRight.setPower(normalizedPowers[1]);
-        backLeft.setPower(normalizedPowers[2]);
-        backRight.setPower(normalizedPowers[3]);
+        if (max > 1.0) {
+            fl /= max; fr /= max; bl /= max; br /= max;
+        }
+
+        frontLeft.setPower(fl);
+        frontRight.setPower(fr);
+        backLeft.setPower(bl);
+        backRight.setPower(br);
     }
 
-    private double[] normalizeWheelSpeeds(double[] speeds) {
+    /*private double[] normalizeWheelSpeeds(double[] speeds) {
         if (largestAbsolute(speeds) > 1) {
             double max = largestAbsolute(speeds);
             for (int i = 0; i < speeds.length; i++){
@@ -150,7 +150,7 @@ public class MecanumDrive extends SubsystemBase {
             }
         }
         return speeds;
-    }
+    }*/
 
     private double largestAbsolute(double[] arr) {
         double largestAbsolute = 0;
