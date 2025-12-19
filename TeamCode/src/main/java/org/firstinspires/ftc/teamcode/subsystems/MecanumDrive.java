@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.teleop.teleop;
 @Config
 public class MecanumDrive extends SubsystemBase {
     private final Bot bot;
-    private final Limelight limelight;
+    //private final Limelight limelight;
     private IMU imu = null;
 
     public final DcMotorEx frontLeft, frontRight, backLeft, backRight;
@@ -44,7 +44,7 @@ public class MecanumDrive extends SubsystemBase {
     public MecanumDrive(Bot bot) {
         this.bot = bot;
         instance = this;
-        this.limelight = teleop.limelight;
+        //this.limelight = teleop.limelight;
 
         odo = bot.hMap.get(GoBildaPinpointDriver.class,"odo");
         odo.setOffsets(-82.66924000028, 110.830759999962, DistanceUnit.INCH);
@@ -91,12 +91,7 @@ public class MecanumDrive extends SubsystemBase {
 
     public void drive(double xPower, double yPower, double rxInput) {
 
-        double rotationPower;
-        if (isTargetLocked && limelight != null && limelight.hasTarget()) {
-            rotationPower = limelight.getTurnPower();
-        } else {
-            rotationPower = rxInput * bot.rotMultiplier;
-        }
+        double rotationPower = rxInput * bot.rotMultiplier;
         double x = -xPower;
         double botHeading = pose.getHeading();
 

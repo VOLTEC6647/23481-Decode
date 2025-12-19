@@ -55,10 +55,13 @@ public class Shooter extends SubsystemBase {
     }
     public void shootOn(){
         updatePIDF();
-        shooter.setVelocity(targetVelocity);
+        shooter.setVelocity(1925);
         //shooter.setPower(1);
     }
     public void shootOff(){
         shooter.setPower(0);
+    }
+    public void setVelocity(double velocity){
+        shooter.setVelocity(velocity);
     }
 }
