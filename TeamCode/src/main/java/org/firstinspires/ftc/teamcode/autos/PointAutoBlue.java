@@ -36,7 +36,7 @@ public class PointAutoBlue extends LinearOpMode {
     public static Pose preGrab1  = new Pose(60, 80, Math.toRadians(180));
     public static Pose grab1  = new Pose(33.5, 80, Math.toRadians(180));
     public static Pose preGrab2  = new Pose(60, 60, Math.toRadians(180));
-    public static Pose grab2  = new Pose(33.5, 60, Math.toRadians(180));
+    public static Pose grab2   = new Pose(33.5, 60, Math.toRadians(180));
     public static Pose preGrab3  = new Pose(60, 35, Math.toRadians(180));
     public static Pose grab3  = new Pose(33.5, 35, Math.toRadians(180));
 

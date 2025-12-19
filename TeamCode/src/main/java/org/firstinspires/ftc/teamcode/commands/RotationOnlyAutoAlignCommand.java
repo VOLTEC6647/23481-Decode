@@ -64,6 +64,8 @@ public class RotationOnlyAutoAlignCommand extends CommandBase {
                 -bot.driver.getLeftY() * bot.speed,
                 pH
         );
+        bot.telem.addData("CurrentAngle",follower.getPose().getHeading());
+        bot.telem.addData("AngleTarget",targetHeading);
     }
 
     @Override
