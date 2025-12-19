@@ -152,7 +152,7 @@ public class teleop extends CommandOpMode {
 
         //shooter command
         new GamepadButton(operatorGamepad, GamepadKeys.Button.A)
-                .toggleWhenPressed(new InstantCommand(()->shooter.setVelocity(1925),shooter),new InstantCommand(()->shooter.shootOff(),shooter));
+                .toggleWhenPressed(new InstantCommand(()->shooter.setVelocity(1900),shooter),new InstantCommand(()->shooter.shootOff(),shooter));
         new GamepadButton(operatorGamepad, GamepadKeys.Button.Y)
                 .toggleWhenPressed(new InstantCommand(()->shooter.setVelocity(1500),shooter),new InstantCommand(()->shooter.shootOff(),shooter));
         //indexer command
@@ -179,9 +179,9 @@ public class teleop extends CommandOpMode {
 
 
         //pivot command
-        /*new GamepadButton(operatorGamepad, GamepadKeys.Button.B)
+        new GamepadButton(operatorGamepad, GamepadKeys.Button.B)
                 .toggleWhenPressed(new InstantCommand(()->pivot.one(), pivot), new InstantCommand(()->pivot.zero(), pivot));
-*/
+
         //hold current position command
         /*new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_UP)
                 .whileHeld(new PositionHoldCommand(bot, follower),true);*/

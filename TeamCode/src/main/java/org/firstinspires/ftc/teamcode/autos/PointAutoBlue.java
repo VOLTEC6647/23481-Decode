@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Bot;
+import org.firstinspires.ftc.teamcode.commands.Drawing;
 import org.firstinspires.ftc.teamcode.commands.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.pedropathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Indexer;
@@ -179,6 +180,8 @@ public class PointAutoBlue extends LinearOpMode {
 
             telem.addData("Follower Status", f.isBusy() ? "Running Path" : "Finished");
             telem.update();
+            Drawing.drawDebug(f);
+            Drawing.sendPacket();
         }
         CommandScheduler.getInstance().reset();
     }
