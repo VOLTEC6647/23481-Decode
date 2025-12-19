@@ -106,7 +106,8 @@ public class PointAutoBlue extends LinearOpMode {
                                         .setLinearHeadingInterpolation(preGrab1.getHeading(),grab1.getHeading())
                                         .build()
                                 ),
-                                new RunCommand(() -> intake.setPower(1.0), intake)
+                                new RunCommand(() -> intake.setPower(1.0), intake),
+                                new RunCommand(()-> indexer.indexOn(),indexer)
                         ),
                         new SequentialCommandGroup(
                                 new WaitCommand(200),

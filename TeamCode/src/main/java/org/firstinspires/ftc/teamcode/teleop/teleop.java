@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.util.ReadWriteFile;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Bot;
 import org.firstinspires.ftc.teamcode.commands.PositionHoldCommand;
+import org.firstinspires.ftc.teamcode.commands.RotationOnlyAutoAlignCommand;
 import org.firstinspires.ftc.teamcode.pedropathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Indexer;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -169,6 +170,13 @@ public class teleop extends CommandOpMode {
         //reset IMU
         new GamepadButton(driverGamepad, GamepadKeys.Button.X)
                 .whenPressed(new InstantCommand(()-> MecanumDrive.odo.resetPosAndIMU()));
+
+        //heading lock
+        new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
+                .whileHeld(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(315)));
+        new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
+                .whileHeld(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(225)));
+
 
         //pivot command
         /*new GamepadButton(operatorGamepad, GamepadKeys.Button.B)
