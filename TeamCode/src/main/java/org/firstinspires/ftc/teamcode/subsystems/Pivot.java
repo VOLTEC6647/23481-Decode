@@ -8,18 +8,24 @@ import org.firstinspires.ftc.teamcode.Bot;
 public class Pivot implements Subsystem {
     private final Bot bot;
     private final Servo pivot;
+    public double setPoint = 0;
 
     public Pivot(Bot bot){
         this.bot = bot;
 
         pivot = bot.hMap.get(Servo.class,"pivot");
-        pivot.setDirection(Servo.Direction.REVERSE);
-        pivot.setPosition(0.5);
+        pivot.setPosition(1);
     }
     public void zero(){
-        pivot.setPosition(0.5);
+        pivot.setPosition(0.23);
     }
     public void one(){
-        pivot.setPosition(0.8);
+        pivot.setPosition(0.76);
+    }
+    public void setPosition(double setpoint){
+        setPoint = setpoint;
+        pivot.setPosition(setPoint);
+
+
     }
 }

@@ -103,7 +103,7 @@ public class MecanumDrive extends SubsystemBase {
         double rotX = x * Math.cos(-botHeading) - yPower * Math.sin(-botHeading);
         double rotY = x * Math.sin(-botHeading) + yPower * Math.cos(-botHeading);
 
-        rotX *= 1.1; // counteract imperfect strafe
+        rotX *= 1; // counteract imperfect strafe
 
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationPower), 1);
         double fl = (rotY + rotX + rotationPower) / denominator;

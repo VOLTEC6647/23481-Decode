@@ -105,7 +105,6 @@ public class teleop extends CommandOpMode {
 
         elevator = new NewElevator(bot);
         elevator.register();
-        elevator.goToLow();
 
         //turret = new Turret(bot);
         //turret.register();
@@ -124,8 +123,8 @@ public class teleop extends CommandOpMode {
         ));
 
         //chassis target-locked command
-        new GamepadButton(driverGamepad, GamepadKeys.Button.A)
-                .whenPressed(()-> { MecanumDrive.isTargetLocked = !MecanumDrive.isTargetLocked; });
+        /*new GamepadButton(driverGamepad, GamepadKeys.Button.A)
+                .whenPressed(()-> { MecanumDrive.isTargetLocked = !MecanumDrive.isTargetLocked; });*/
 
         //turret default command
         /*turret.setDefaultCommand(new RunCommand(
@@ -146,6 +145,10 @@ public class teleop extends CommandOpMode {
                 .whenActive(new RunCommand(() -> intake.setPower(1), intake));
         new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)<0.1)
                 .whenActive(new InstantCommand(() -> intake.setPower(0), intake));
+        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
+                .whenActive(new RunCommand(() -> intake.setPower(-1), intake));
+        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)<0.1)
+                .whenActive(new InstantCommand(() -> intake.setPower(0), intake));
 
         //shooter command
         new GamepadButton(operatorGamepad, GamepadKeys.Button.A)
@@ -153,25 +156,26 @@ public class teleop extends CommandOpMode {
 
         //indexer command
         new GamepadButton(operatorGamepad, GamepadKeys.Button.LEFT_BUMPER)
-                .toggleWhenPressed(new RunCommand(()->indexer.indexOn(), indexer),new InstantCommand(()->indexer.indexOff(), indexer));
-
+                .whileHeld(new RunCommand(()->indexer.indexOn(), indexer))
+                .whenReleased(new InstantCommand(()->indexer.indexOff(), indexer));
+        new GamepadButton(operatorGamepad, GamepadKeys.Button.RIGHT_BUMPER)
+                .whileHeld(new RunCommand(()->indexer.indexOut(), indexer))
+                .whenReleased(new InstantCommand(()->indexer.indexOff(), indexer));
         //elevator command
-        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
-                .whenActive(new InstantCommand(()-> elevator.goToHigh(), elevator));
-        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)<0.1)
-                .whenActive(new InstantCommand(()-> elevator.goToLow(), elevator));
+        new GamepadButton(operatorGamepad, GamepadKeys.Button.DPAD_DOWN)
+        .toggleWhenPressed(new InstantCommand(()-> elevator.goToHigh(), elevator), new InstantCommand(()-> elevator.goToLow(), elevator));
 
         //pivot command
         new GamepadButton(operatorGamepad, GamepadKeys.Button.B)
                 .toggleWhenPressed(new InstantCommand(()->pivot.one(), pivot), new InstantCommand(()->pivot.zero(), pivot));
 
         //hold current position command
-        new GamepadButton(driverGamepad, GamepadKeys.Button.X)
-                .whileHeld(new PositionHoldCommand(bot, follower),true);
+        /*new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_UP)
+                .whileHeld(new PositionHoldCommand(bot, follower),true);*/
 
         //hold score position command
-        new GamepadButton(driverGamepad, GamepadKeys.Button.Y)
-                .whileHeld(new PositionHoldCommand(bot, follower, score),true);
+        /*new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_LEFT)
+                .whileHeld(new PositionHoldCommand(bot, follower, score),true);*/
 
 
         /*

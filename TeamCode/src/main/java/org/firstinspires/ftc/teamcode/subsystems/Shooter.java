@@ -15,12 +15,12 @@ public class Shooter extends SubsystemBase {
     private DcMotorEx shooter;
     @Config
     public static class ShooterPIDF{
-        public static double kp = 20;
+        public static double kp = 60;
         public static double ki = 0;
-        public static double kd = 1.5;
-        public static double kf = 14;
+        public static double kd = 2.5;
+        public static double kf = 0;
     }
-    public static double targetVelocity = 5000;
+    public static double targetVelocity = 2000;
     private MultipleTelemetry telemetry;
 
 
@@ -54,9 +54,9 @@ public class Shooter extends SubsystemBase {
         telemetry.addData("Shooter/Error", targetVelocity - currentVelocity);
     }
     public void shootOn(){
-        //updatePIDF();
-        //shooter.setVelocity(targetVelocity);
-        shooter.setPower(1);
+        updatePIDF();
+        shooter.setVelocity(targetVelocity);
+        //shooter.setPower(1);
     }
     public void shootOff(){
         shooter.setPower(0);
