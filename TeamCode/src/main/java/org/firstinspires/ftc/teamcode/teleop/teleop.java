@@ -16,6 +16,7 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Bot;
 import org.firstinspires.ftc.teamcode.commands.PositionHoldCommand;
@@ -152,9 +153,9 @@ public class teleop extends CommandOpMode {
 
         //shooter command
         new GamepadButton(operatorGamepad, GamepadKeys.Button.A)
-                .toggleWhenPressed(new InstantCommand(()->shooter.setVelocity(1900),shooter),new InstantCommand(()->shooter.shootOff(),shooter));
+                .whenPressed(new InstantCommand(()->shooter.setVelocity(1900),shooter));//,new InstantCommand(()->shooter.shootOff(),shooter)
         new GamepadButton(operatorGamepad, GamepadKeys.Button.Y)
-                .toggleWhenPressed(new InstantCommand(()->shooter.setVelocity(1500),shooter),new InstantCommand(()->shooter.shootOff(),shooter));
+                .whenPressed(new InstantCommand(()->shooter.setVelocity(1500),shooter));
         //indexer command
         new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
                 .whenActive(new RunCommand(()->indexer.indexOn(), indexer));
@@ -173,9 +174,11 @@ public class teleop extends CommandOpMode {
 
         //heading lock
         new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
-                .whileHeld(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(315)));
-        new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
                 .whileHeld(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(225)));
+        new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
+                .whileHeld(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(-225)));
+        new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1).whileActiveContinuous(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(110)));
+        new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1).whileActiveContinuous(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(-110)));
 
 
         //pivot command
@@ -202,6 +205,8 @@ public class teleop extends CommandOpMode {
     public void run() {
         //periodicBindings();
         CommandScheduler.getInstance().run();
+        bot.telem.addData("CurrentOdoAngle", MecanumDrive.odo.getPosition().getHeading(AngleUnit.DEGREES));
+
         telem.update();
     }
 

@@ -21,7 +21,7 @@ public class Bot extends Robot {
     public final HardwareMap hMap;
     public final GamepadEx driver;
     public final GamepadEx opertator;
-    public double speed = 1;
+    public double speed = 1.1;
     public double rotMultiplier = 1;
     public final MecanumDrive drive;
 

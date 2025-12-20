@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.pedropathing.follower.Follower;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Bot;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 
@@ -47,7 +48,7 @@ public class RotationOnlyAutoAlignCommand extends CommandBase {
 
     @Override
     public void execute() {
-        double currentHeading = follower.getPose().getHeading();
+        double currentHeading = MecanumDrive.odo.getPosition().getHeading(AngleUnit.RADIANS);
 
         // Calculate heading error with proper angle wrapping
         double errorH = Math.atan2(
@@ -64,8 +65,8 @@ public class RotationOnlyAutoAlignCommand extends CommandBase {
                 -bot.driver.getLeftY() * bot.speed,
                 pH
         );
-        bot.telem.addData("CurrentAngle",follower.getPose().getHeading());
-        bot.telem.addData("AngleTarget",targetHeading);
+        bot.telem.addData("CurrentAngle", Math.toDegrees(currentHeading));
+        bot.telem.addData("AngleTarget", Math.toDegrees(targetHeading));
     }
 
     @Override
