@@ -33,7 +33,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Far Red Auto")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "no usar")
 public class TruePointAutoRed extends LinearOpMode {
 
     // --- RED TEAM POSES ---

@@ -32,7 +32,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Close Red Auto")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "no usar")
 public class CloseRedAuto extends LinearOpMode {
 
     // --- RED TEAM POSES ---
