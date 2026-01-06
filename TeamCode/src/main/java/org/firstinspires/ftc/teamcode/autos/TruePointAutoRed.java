@@ -28,18 +28,21 @@ import org.firstinspires.ftc.teamcode.commands.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.pedropathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Indexer;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Red Point Auto")
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Far Red Auto")
 public class TruePointAutoRed extends LinearOpMode {
 
     // --- RED TEAM POSES ---
-    public static Pose score = new Pose(88, 15, Math.toRadians(-111));
-    public static Pose start = new Pose(88, 9.5, Math.toRadians(-90));
-    public static Pose preGrab  = new Pose(114, 15, Math.toRadians(0));
-    public static Pose grab  = new Pose(134, 15, Math.toRadians(0));
+    public static Pose score = new Pose(89, 16, Math.toRadians(-113));
+    public static Pose start = new Pose(89, 8, Math.toRadians(-90));
+    public static Pose preGrab = new Pose(89, 34, Math.toRadians(0));
+    public static Pose grab = new Pose(124, 34, Math.toRadians(0));
+    public static Pose preGrab2 = new Pose(89, 58.5, Math.toRadians(0));
+    public static Pose grab2 = new Pose(124, 58.5, Math.toRadians(0));
     private Bot bot;
     private MultipleTelemetry telem;
     private GamepadEx driverGamepad;
@@ -47,13 +50,14 @@ public class TruePointAutoRed extends LinearOpMode {
     private Intake intake;
     private Indexer indexer;
     private Shooter shooter;
+    private Pivot pivot;
 
     private SequentialCommandGroup getFireSequence(Indexer indexer) {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new InstantCommand(indexer::indexOn, indexer)
                 ),
-                new WaitCommand(2000),
+                new WaitCommand(2500),//5000 when nova
                 new ParallelCommandGroup(
                         new InstantCommand(indexer::indexOff, indexer)
                 )
@@ -66,8 +70,10 @@ public class TruePointAutoRed extends LinearOpMode {
                         .setLinearHeadingInterpolation(score.getHeading(), preGrab.getHeading())
                         .addPath(new BezierLine(preGrab, grab))
                         .setLinearHeadingInterpolation(preGrab.getHeading(), grab.getHeading())
-                        .addPath(new BezierLine(grab, score))
-                        .setLinearHeadingInterpolation(grab.getHeading(), score.getHeading())
+                        .addPath(new BezierLine(grab, preGrab))
+                        .setLinearHeadingInterpolation(grab.getHeading(), preGrab.getHeading())
+                        .addPath(new BezierLine(preGrab, score))
+                        .setLinearHeadingInterpolation(preGrab.getHeading(), score.getHeading())
                         .build()
                 )
         );
@@ -98,6 +104,10 @@ public class TruePointAutoRed extends LinearOpMode {
         shooter = new Shooter(hardwareMap,telemetry);
         shooter.register();
 
+        pivot = new Pivot(bot);
+        pivot.register();
+        pivot.setPosition(0.4);
+
 
         ParallelDeadlineGroup auto = new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
@@ -108,22 +118,39 @@ public class TruePointAutoRed extends LinearOpMode {
                                         .setLinearHeadingInterpolation(start.getHeading(), score.getHeading())
                                         .build()
                                 ),
+                                new WaitCommand(1500),
                                 getFireSequence(indexer),
-                                //Cycle 1
                                 getScoringPath(f),
+                                new WaitCommand(500),
                                 getFireSequence(indexer),
-                                //Cycle 2
-                                getScoringPath(f),
-                                getFireSequence(indexer),
-                                //Cycle 3
-                                getScoringPath(f),
+                                new FollowPathCommand(f, f.pathBuilder()
+                                        .addPath(new BezierLine(score, preGrab2))
+                                        .setLinearHeadingInterpolation(score.getHeading(), preGrab2.getHeading())
+                                        .build()
+                                ),
+                                new FollowPathCommand(f, f.pathBuilder()
+                                        .addPath(new BezierLine(preGrab2, grab2))
+                                        .setLinearHeadingInterpolation(preGrab2.getHeading(), grab2.getHeading())
+                                        .build()
+                                ),
+                                new FollowPathCommand(f, f.pathBuilder()
+                                        .addPath(new BezierLine(grab2, preGrab2))
+                                        .setLinearHeadingInterpolation(grab2.getHeading(), preGrab2.getHeading())
+                                        .build()
+                                ),
+                                new FollowPathCommand(f, f.pathBuilder()
+                                        .addPath(new BezierLine(preGrab2, score))
+                                        .setLinearHeadingInterpolation(preGrab2.getHeading(), score.getHeading())
+                                        .build()
+                                ),
+                                new WaitCommand(500),
                                 getFireSequence(indexer)
                         )
                 )
         );
         auto.addCommands(
                 new RunCommand(() -> intake.setPower(1), intake),
-                new RunCommand(() -> shooter.setVelocity(1900), shooter)
+                new RunCommand(() -> shooter.setVelocity(1500), shooter)
         );
 
         waitForStart();
@@ -135,7 +162,7 @@ public class TruePointAutoRed extends LinearOpMode {
             CommandScheduler.getInstance().run();
             f.update();
             telem.addData("current pose", f.getPose());
-
+            telem.addData("velocity",shooter.shooter.getVelocity());
             telem.addData("Follower Status", f.isBusy() ? "Running Path" : "Finished");
             telem.update();
             Drawing.drawDebug(f);

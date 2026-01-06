@@ -16,11 +16,11 @@ public class Pivot implements Subsystem {
         pivot = bot.hMap.get(Servo.class,"pivot");
         pivot.setPosition(1);
     }
-    public void zero(){
+    public void close(){
         pivot.setPosition(0.23);
     }
-    public void one(){
-        pivot.setPosition(0.35);
+    public void far(){
+        pivot.setPosition(0.4);
     }
     public void setPosition(double setpoint){
         setPoint = setpoint;

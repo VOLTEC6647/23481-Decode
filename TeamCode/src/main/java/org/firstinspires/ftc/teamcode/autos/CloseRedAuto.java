@@ -11,7 +11,6 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
-import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -30,20 +29,20 @@ import org.firstinspires.ftc.teamcode.subsystems.Indexer;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
-import org.firstinspires.ftc.teamcode.utils.PedroMirror;
 
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Far Auto")
-public class TruePointAutoBlue extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Close Red Auto")
+public class CloseRedAuto extends LinearOpMode {
 
-    // --- BLUE TEAM POSES ---
-    public static Pose score = new Pose(55, 16, Math.toRadians(-67));
-    public static Pose start = new Pose(55, 8, Math.toRadians(-90));
-    public static Pose preGrab = new Pose(55, 34, Math.toRadians(180));
-    public static Pose grab = new Pose(20, 34, Math.toRadians(180));
-    public static Pose preGrab2  = new Pose(55, 58.5, Math.toRadians(180));
-    public static Pose grab2  = new Pose(20, 58.5, Math.toRadians(180));
+    // --- RED TEAM POSES ---
+    public static Pose score = new Pose(78, 77.5, Math.toRadians(-134));
+    public static Pose start = new Pose(108, 137.5, Math.toRadians(-90));
+    public static Pose preGrab = new Pose(89, 84, Math.toRadians(0));
+    public static Pose grab = new Pose(119, 86, Math.toRadians(0));
+    public static Pose preGrab2  = new Pose(89, 60, Math.toRadians(0));
+    public static Pose grab2  = new Pose(124, 60, Math.toRadians(0));
+
     private Bot bot;
     private MultipleTelemetry telem;
     private GamepadEx driverGamepad;
@@ -58,10 +57,13 @@ public class TruePointAutoBlue extends LinearOpMode {
                 new ParallelCommandGroup(
                         new InstantCommand(indexer::indexOn, indexer)
                 ),
-                new WaitCommand(2500),//5000 when nova
-                            new InstantCommand(indexer::indexOff,indexer)
-                );
+                new WaitCommand(2500),
+                new ParallelCommandGroup(
+                        new InstantCommand(indexer::indexOff, indexer)
+                )
+        );
     }
+
     private SequentialCommandGroup getScoringPath(Follower f){
         return new SequentialCommandGroup(
                 new FollowPathCommand(f, f.pathBuilder()
@@ -91,14 +93,6 @@ public class TruePointAutoBlue extends LinearOpMode {
         VoltageSensor vs = bot.hMap.voltageSensor.iterator().next();
 
         Follower f = Constants.createFollower(bot.hMap);
-        if(bot.isRed()){
-            score = PedroMirror.mirrorPose(score);
-            start = PedroMirror.mirrorPose(start);
-            preGrab = PedroMirror.mirrorPose(preGrab);
-            grab = PedroMirror.mirrorPose(grab);
-            preGrab2  = PedroMirror.mirrorPose(preGrab2);
-            grab2  = PedroMirror.mirrorPose(grab2);
-        }
         f.setStartingPose(start);
         f.update();
 
@@ -113,12 +107,12 @@ public class TruePointAutoBlue extends LinearOpMode {
 
         pivot = new Pivot(bot);
         pivot.register();
-        pivot.far();
+        pivot.close();
 
 
         ParallelDeadlineGroup auto = new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
-                        //Initial score
+                        // Initial score
                         new SequentialCommandGroup(
                                 new FollowPathCommand(f, f.pathBuilder()
                                         .addPath(new BezierLine(start, score))
@@ -151,13 +145,13 @@ public class TruePointAutoBlue extends LinearOpMode {
                                         .build()
                                 ),
                                 new WaitCommand(500),
-                                new InstantCommand(indexer::indexOn,indexer)
+                                getFireSequence(indexer)
                         )
                 )
         );
         auto.addCommands(
                 new RunCommand(() -> intake.setPower(1), intake),
-                new RunCommand(() -> shooter.setVelocity(1475), shooter)
+                new RunCommand(() -> shooter.setVelocity(1200), shooter)
         );
 
         waitForStart();
@@ -169,14 +163,14 @@ public class TruePointAutoBlue extends LinearOpMode {
             CommandScheduler.getInstance().run();
             f.update();
             telem.addData("current pose", f.getPose());
-            telem.addData("velocity",shooter.shooter.getVelocity());
+            telem.addData("velocity", shooter.shooter.getVelocity());
             telem.addData("Follower Status", f.isBusy() ? "Running Path" : "Finished");
             telem.update();
             Drawing.drawDebug(f);
             Drawing.sendPacket();
         }
         CommandScheduler.getInstance().reset();
-        
+
         File gyr = AppUtil.getInstance().getSettingsFile("gyropending.txt");
         ReadWriteFile.writeFile(gyr, "1");
     }

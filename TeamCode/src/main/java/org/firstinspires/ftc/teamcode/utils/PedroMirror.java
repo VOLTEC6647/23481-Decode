@@ -6,7 +6,7 @@ public class PedroMirror {
     public static double mirrorHeading(double heading){
         return  180 - (heading - 90);
     }
-    public Pose mirrorPose(Pose pose) {
+    public static Pose mirrorPose(Pose pose) {
         // 1. Mirror X: Total width (144) - current X
         // Since center is 72, the formula is: 2 * 72 - x
         double newX = 144 - pose.getX();

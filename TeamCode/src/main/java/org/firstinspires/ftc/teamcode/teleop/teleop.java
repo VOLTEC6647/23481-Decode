@@ -161,29 +161,29 @@ public class teleop extends CommandOpMode {
                 .whenPressed(new InstantCommand(turret::resetEncoder, turret));*/
 
         //intake command
-        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
+        new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1)
                 .whenActive(new RunCommand(() -> intake.setPower(1), intake));
-        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)<0.1)
+        new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)<0.1)
                 .whenActive(new InstantCommand(() -> intake.setPower(0), intake));
         new GamepadButton(operatorGamepad, GamepadKeys.Button.LEFT_BUMPER)
                 .whileHeld(new RunCommand(()->intake.setPower(-1), intake))
                 .whenReleased(new InstantCommand(()->intake.setPower(0), intake));
 
         //shooter command
-        new GamepadButton(operatorGamepad, GamepadKeys.Button.A)
+        new GamepadButton(driverGamepad, GamepadKeys.Button.A)
                 .whenPressed(new InstantCommand(()->shooter.setVelocity(1500),shooter));//,new InstantCommand(()->shooter.shootOff(),shooter)
-        new GamepadButton(operatorGamepad, GamepadKeys.Button.Y)
+        new GamepadButton(driverGamepad, GamepadKeys.Button.Y)
                 .whenPressed(new InstantCommand(()->shooter.setVelocity(1300),shooter));
         //indexer command
-        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
+        new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
                 .whenActive(new RunCommand(()->indexer.setPower(0.4), indexer));
-        new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)<0.1)
+        new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)<0.1)
                 .whenActive(new RunCommand(()->indexer.indexOff(), indexer));
         new GamepadButton(operatorGamepad, GamepadKeys.Button.RIGHT_BUMPER)
                 .whileHeld(new RunCommand(()->indexer.indexOut(), indexer))
                 .whenReleased(new InstantCommand(()->indexer.indexOff(), indexer));
         //elevator command
-        new GamepadButton(driverGamepad, GamepadKeys.Button.B)
+        new GamepadButton(operatorGamepad, GamepadKeys.Button.B)
         .toggleWhenPressed(new InstantCommand(()-> elevator.goToHigh(), elevator), new InstantCommand(()-> elevator.goToLow(), elevator));
 
         //reset IMU
@@ -196,13 +196,14 @@ public class teleop extends CommandOpMode {
         //new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
         //        .whileHeld(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(-225)));
 
-        new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1).whileActiveContinuous(new RotationOnlyAutoAlignCommand(bot,Math.toRadians(-153)));
-        new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1).whileActiveContinuous(new RotationOnlyAutoAlignCommand(bot,Math.toRadians(-133)));
-
+        new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
+                .whileHeld(new RotationOnlyAutoAlignCommand(bot,Math.toRadians(-153)));
+        new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
+                .whileHeld(new RotationOnlyAutoAlignCommand(bot,Math.toRadians(-133)));
 
         //pivot command
-        new GamepadButton(operatorGamepad, GamepadKeys.Button.B)
-                .toggleWhenPressed(new InstantCommand(()->pivot.setPosition(0.4), pivot), new InstantCommand(()->pivot.zero(), pivot));
+        new GamepadButton(driverGamepad, GamepadKeys.Button.B)
+                .toggleWhenPressed(new InstantCommand(()->pivot.far(), pivot), new InstantCommand(()->pivot.close(), pivot));
 
         //hold current position command
         /*new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_UP)
