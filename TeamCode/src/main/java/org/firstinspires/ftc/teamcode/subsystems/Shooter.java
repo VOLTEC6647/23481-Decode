@@ -12,10 +12,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Shooter extends SubsystemBase {
-    private DcMotorEx shooter;
+    public DcMotorEx shooter;
     @Config
     public static class ShooterPIDF{
-        public static double kp = 60;
+        public static double kp = 300;
         public static double ki = 0;
         public static double kd = 2.5;
         public static double kf = 0;

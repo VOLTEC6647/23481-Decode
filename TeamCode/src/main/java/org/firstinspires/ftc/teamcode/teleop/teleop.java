@@ -153,12 +153,12 @@ public class teleop extends CommandOpMode {
 
         //shooter command
         new GamepadButton(operatorGamepad, GamepadKeys.Button.A)
-                .whenPressed(new InstantCommand(()->shooter.setVelocity(1900),shooter));//,new InstantCommand(()->shooter.shootOff(),shooter)
+                .whenPressed(new InstantCommand(()->shooter.setVelocity(1500),shooter));//,new InstantCommand(()->shooter.shootOff(),shooter)
         new GamepadButton(operatorGamepad, GamepadKeys.Button.Y)
-                .whenPressed(new InstantCommand(()->shooter.setVelocity(1500),shooter));
+                .whenPressed(new InstantCommand(()->shooter.setVelocity(1000),shooter));
         //indexer command
         new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
-                .whenActive(new RunCommand(()->indexer.indexOn(), indexer));
+                .whenActive(new RunCommand(()->indexer.setPower(0.4), indexer));
         new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)<0.1)
                 .whenActive(new RunCommand(()->indexer.indexOff(), indexer));
         new GamepadButton(operatorGamepad, GamepadKeys.Button.RIGHT_BUMPER)
@@ -183,7 +183,7 @@ public class teleop extends CommandOpMode {
 
         //pivot command
         new GamepadButton(operatorGamepad, GamepadKeys.Button.B)
-                .toggleWhenPressed(new InstantCommand(()->pivot.one(), pivot), new InstantCommand(()->pivot.zero(), pivot));
+                .toggleWhenPressed(new InstantCommand(()->pivot.setPosition(0.4), pivot), new InstantCommand(()->pivot.zero(), pivot));
 
         //hold current position command
         /*new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_UP)
