@@ -47,12 +47,9 @@ public class MecanumDrive extends SubsystemBase {
         //this.limelight = teleop.limelight;
 
         odo = bot.hMap.get(GoBildaPinpointDriver.class,"odo");
-        odo.setOffsets(-82.66924000028, 110.830759999962, DistanceUnit.INCH);
-        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
-
-        Pose2D initialPose = new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.RADIANS, 0);
-        odo.setPosition(initialPose);
+        //odo.setOffsets(-82.66924000028, 110.830759999962, DistanceUnit.INCH);
+        //odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        //odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
         frontLeft = bot.hMap.get(DcMotorEx.class, "M0");
         frontRight = bot.hMap.get(DcMotorEx.class, "M1");

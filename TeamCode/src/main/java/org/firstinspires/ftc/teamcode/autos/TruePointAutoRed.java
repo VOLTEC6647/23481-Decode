@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.autos;
 
+import com.qualcomm.robotcore.util.ReadWriteFile;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import java.io.File;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -138,5 +142,8 @@ public class TruePointAutoRed extends LinearOpMode {
             Drawing.sendPacket();
         }
         CommandScheduler.getInstance().reset();
+
+        File gyr = AppUtil.getInstance().getSettingsFile("gyropending.txt");
+        ReadWriteFile.writeFile(gyr, "1");
     }
 }

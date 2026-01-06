@@ -17,6 +17,8 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Bot;
 import org.firstinspires.ftc.teamcode.commands.PositionHoldCommand;
@@ -37,7 +39,6 @@ import java.io.File;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "TeleOp")
 public class teleop extends CommandOpMode {
     private Bot bot;
-    private Follower follower;
     private MultipleTelemetry telem;
     private GamepadEx driverGamepad;
     private GamepadEx operatorGamepad;
@@ -73,25 +74,42 @@ public class teleop extends CommandOpMode {
 
         bot = new Bot(telem, hardwareMap, driverGamepad, operatorGamepad);
 
-        follower = Constants.createFollower(bot.hMap);
-        follower.update();
 
-        File myFileName = AppUtil.getInstance().getSettingsFile("team.txt");
-        String team = ReadWriteFile.readFile(myFileName);
-
-
-        /*if (team.equals("blue")){
-            bot.setRotationOffset(Rotation2d.fromDegrees(0));
-        }
-        if (team.equals("red")){
-            bot.setRotationOffset(Rotation2d.fromDegrees(0));
-        }*/
 
         //limelight = new Limelight(bot);
         //fff                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                limelight.register();
 
         drive = new MecanumDrive(bot);
         drive.register();
+
+        File gyr = AppUtil.getInstance().getSettingsFile("gyropending.txt");
+        String pending = "";
+        try {
+            pending = ReadWriteFile.readFile(gyr);
+        } catch (Exception e) {
+        }
+
+        if (pending.trim().equals("1")) {
+            ReadWriteFile.writeFile(gyr, "0");
+            File teamFile = AppUtil.getInstance().getSettingsFile("team.txt");
+            String team = "";
+            try {
+                team = ReadWriteFile.readFile(teamFile).trim();
+            } catch (Exception e) {}
+
+            double currentHeading = MecanumDrive.odo.getPosition().getHeading(AngleUnit.DEGREES);
+            double newHeading = currentHeading;
+
+            if (team.equals("blue")) {
+                newHeading += 90;
+            } else if (team.equals("red")) {
+                newHeading -= 90;
+            }
+
+            Pose2D currentPos = MecanumDrive.odo.getPosition();
+            MecanumDrive.odo.setPosition(new Pose2D(DistanceUnit.MM, currentPos.getX(DistanceUnit.MM), currentPos.getY(DistanceUnit.MM), AngleUnit.DEGREES, newHeading));
+            MecanumDrive.odo.update();
+        }
 
         shooter = new Shooter(hardwareMap,telemetry);
         shooter.register();
@@ -117,8 +135,8 @@ public class teleop extends CommandOpMode {
         //chasis default command
         drive.setDefaultCommand(new RunCommand(
                 () -> drive.drive(
-                        driverGamepad.getLeftX() * bot.speed,
                         -driverGamepad.getLeftY() * bot.speed,
+                        -driverGamepad.getLeftX() * bot.speed,
                         -driverGamepad.getRightX() * 0.8
                 ),
                 drive
@@ -155,7 +173,7 @@ public class teleop extends CommandOpMode {
         new GamepadButton(operatorGamepad, GamepadKeys.Button.A)
                 .whenPressed(new InstantCommand(()->shooter.setVelocity(1500),shooter));//,new InstantCommand(()->shooter.shootOff(),shooter)
         new GamepadButton(operatorGamepad, GamepadKeys.Button.Y)
-                .whenPressed(new InstantCommand(()->shooter.setVelocity(1000),shooter));
+                .whenPressed(new InstantCommand(()->shooter.setVelocity(1300),shooter));
         //indexer command
         new Trigger(()-> operatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
                 .whenActive(new RunCommand(()->indexer.setPower(0.4), indexer));
@@ -173,12 +191,13 @@ public class teleop extends CommandOpMode {
                 .whenPressed(new InstantCommand(()-> MecanumDrive.odo.resetPosAndIMU()));
 
         //heading lock
-        new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
-                .whileHeld(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(225)));
-        new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
-                .whileHeld(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(-225)));
-        new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1).whileActiveContinuous(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(110)));
-        new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1).whileActiveContinuous(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(-110)));
+        //new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
+        //        .whileHeld(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(225)));
+        //new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
+        //        .whileHeld(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(-225)));
+
+        new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)>0.1).whileActiveContinuous(new RotationOnlyAutoAlignCommand(bot,Math.toRadians(-153)));
+        new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1).whileActiveContinuous(new RotationOnlyAutoAlignCommand(bot,Math.toRadians(-133)));
 
 
         //pivot command

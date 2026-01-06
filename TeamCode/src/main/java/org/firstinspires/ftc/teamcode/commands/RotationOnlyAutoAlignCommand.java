@@ -17,26 +17,23 @@ import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 @Config
 public class RotationOnlyAutoAlignCommand extends CommandBase {
     private final Bot bot;
-    private final Follower follower;
     private final double targetHeading;
 
     // --- PID COEFFICIENTS (Tune these values!) ---
     // Heading PID - reused from PositionHoldCommand
     public static double kPH = 1.2;
     public static double kIH = 0.0;
-    public static double kDH = 0.005;
+    public static double kDH = 0.01;
 
     private final PIDController hController = new PIDController(kPH, kIH, kDH);
 
     /**
      * Creates a command to auto-align the robot to a specific heading.
      * @param bot The main robot object.
-     * @param follower The PedroPathing follower instance.
      * @param targetHeading The target heading in radians.
      */
-    public RotationOnlyAutoAlignCommand(Bot bot, Follower follower, double targetHeading) {
+    public RotationOnlyAutoAlignCommand(Bot bot, double targetHeading) {
         this.bot = bot;
-        this.follower = follower;
         this.targetHeading = targetHeading;
         addRequirements(MecanumDrive.getInstance());
     }
@@ -61,8 +58,9 @@ public class RotationOnlyAutoAlignCommand extends CommandBase {
 
         // Pass through X/Y controls from left stick, override rotation with PID
         MecanumDrive.getInstance().drive(
-                bot.driver.getLeftX() * bot.speed,
                 -bot.driver.getLeftY() * bot.speed,
+
+                -bot.driver.getLeftX() * bot.speed,
                 pH
         );
         bot.telem.addData("CurrentAngle", Math.toDegrees(currentHeading));
