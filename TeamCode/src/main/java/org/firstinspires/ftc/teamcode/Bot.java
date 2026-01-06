@@ -6,11 +6,15 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 import org.firstinspires.ftc.teamcode.utils.ImuGlobal;
+
+import java.io.File;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +29,7 @@ public class Bot extends Robot {
     public double rotMultiplier = 1;
     public final MecanumDrive drive;
 
+    private String teamColor = "";
 
     public final ElapsedTime timer;
 
@@ -39,6 +44,11 @@ public class Bot extends Robot {
         imu = ImuGlobal.getImu(hMap);
 
         this.drive = new MecanumDrive(this);
+
+        File teamFile = AppUtil.getInstance().getSettingsFile("team.txt");
+        try {
+            teamColor = ReadWriteFile.readFile(teamFile).trim();
+        } catch (Exception e) {}
     }
     /**
      * Get the IMU object for the robot
@@ -63,6 +73,14 @@ public class Bot extends Robot {
 
     public double getTimestamp() {
         return timer.seconds();
+    }
+
+    public boolean isRed() {
+        return teamColor.equals("red");
+    }
+
+    public boolean isBlue() {
+        return teamColor.equals("blue");
     }
 
     /**
