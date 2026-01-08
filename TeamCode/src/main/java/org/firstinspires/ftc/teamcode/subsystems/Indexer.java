@@ -24,7 +24,7 @@ public class Indexer implements Subsystem {
     }
 
     public void indexOn(){
-        indexer.setPower(.6);
+        indexer.setPower(.45);
     }
     public void indexOff(){
         indexer.setPower(0);

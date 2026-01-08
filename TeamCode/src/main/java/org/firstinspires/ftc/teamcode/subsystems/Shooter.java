@@ -18,7 +18,7 @@ public class Shooter extends SubsystemBase {
         public static double kp = 300;
         public static double ki = 0;
         public static double kd = 2.5;
-        public static double kf = 0;
+        public static double kf = 14.5;
     }
     public static double targetVelocity = 2000;
     private MultipleTelemetry telemetry;

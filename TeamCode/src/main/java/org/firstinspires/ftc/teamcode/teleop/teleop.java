@@ -49,7 +49,7 @@ public class teleop extends CommandOpMode {
     private Intake intake;
     private Indexer indexer;
     private NewElevator elevator;
-    public static Pose score = new Pose(55, 85, Math.toRadians(315));
+    boolean redTeam = false;
     //private Turret turret;
     /*private DiffClaw dClaw;
     private DiffClawUp diffClawUp;
@@ -171,9 +171,9 @@ public class teleop extends CommandOpMode {
 
         //shooter command
         new GamepadButton(driverGamepad, GamepadKeys.Button.A)
-                .whenPressed(new InstantCommand(()->shooter.setVelocity(1500),shooter));//,new InstantCommand(()->shooter.shootOff(),shooter)
+                .whenPressed(new InstantCommand(()->shooter.setVelocity(1475),shooter));//,new InstantCommand(()->shooter.shootOff(),shooter)
         new GamepadButton(driverGamepad, GamepadKeys.Button.Y)
-                .whenPressed(new InstantCommand(()->shooter.setVelocity(1300),shooter));
+                .whenPressed(new InstantCommand(()->shooter.setVelocity(1190),shooter));
         //indexer command
         new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
                 .whenActive(new RunCommand(()->indexer.setPower(0.4), indexer));
@@ -183,12 +183,14 @@ public class teleop extends CommandOpMode {
                 .whileHeld(new RunCommand(()->indexer.indexOut(), indexer))
                 .whenReleased(new InstantCommand(()->indexer.indexOff(), indexer));
         //elevator command
-        new GamepadButton(operatorGamepad, GamepadKeys.Button.B)
+        new GamepadButton(operatorGamepad, GamepadKeys.Button.X)
         .toggleWhenPressed(new InstantCommand(()-> elevator.goToHigh(), elevator), new InstantCommand(()-> elevator.goToLow(), elevator));
 
         //reset IMU
         new GamepadButton(driverGamepad, GamepadKeys.Button.X)
                 .whenPressed(new InstantCommand(()-> MecanumDrive.odo.resetPosAndIMU()));
+
+        //change teams
 
         //heading lock
         //new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
@@ -196,11 +198,18 @@ public class teleop extends CommandOpMode {
         //new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
         //        .whileHeld(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(-225)));
 
-        new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
-                .whileHeld(new RotationOnlyAutoAlignCommand(bot,Math.toRadians(-153)));
-        new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
-                .whileHeld(new RotationOnlyAutoAlignCommand(bot,Math.toRadians(-133)));
-
+        //auto-align
+        if(redTeam){
+            new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
+                    .whileHeld(new RotationOnlyAutoAlignCommand(bot,Math.toRadians(-135)));
+            new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
+                    .whileHeld(new RotationOnlyAutoAlignCommand(bot,Math.toRadians(-113)));
+        } else {
+            new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
+                    .whileHeld(new RotationOnlyAutoAlignCommand(bot, Math.toRadians(135)));
+            new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
+                    .whileHeld(new RotationOnlyAutoAlignCommand(bot, Math.toRadians(113)));
+        }
         //pivot command
         new GamepadButton(driverGamepad, GamepadKeys.Button.B)
                 .toggleWhenPressed(new InstantCommand(()->pivot.far(), pivot), new InstantCommand(()->pivot.close(), pivot));

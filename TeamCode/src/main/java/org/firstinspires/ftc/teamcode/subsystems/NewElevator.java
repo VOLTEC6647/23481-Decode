@@ -12,7 +12,7 @@ public class NewElevator extends SubsystemBase {
     private final DcMotorEx leftElevator;
     private final int low = 0;
     private final int high = 5300;
-    private final double speed = 0.3;
+    private final double speed = 0.25;
     public NewElevator(Bot bot) {
         this.bot = bot;
         rightElevator = bot.hMap.get(DcMotorEx.class, "re");
