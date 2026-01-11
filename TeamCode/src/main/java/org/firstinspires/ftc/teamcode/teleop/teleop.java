@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.button.Button;
@@ -184,22 +185,23 @@ public class teleop extends CommandOpMode {
         //new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
         //        .whileHeld(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(-225)));
 
-        //change teams
+        //switch teams
         new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_RIGHT)
-                .toggleWhenPressed(this::changeToRed, this::changeToBlue);
-
-        //auto-align
-        if(redTeam){
-            new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
-                    .whileHeld(new RotationOnlyAutoAlignCommand(bot,Math.toRadians(45)));
-            new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
-                    .whileHeld(new RotationOnlyAutoAlignCommand(bot,Math.toRadians(22)));
-        } else {
-            new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
-                    .whileHeld(new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-45)));
-            new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
-                    .whileHeld(new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-22)));
-        }
+                .whenPressed(new InstantCommand(() -> {
+                    redTeam = !redTeam;
+                }));
+        new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
+                .whileHeld(new ConditionalCommand(
+                        new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-45)),  // If true (Red)
+                        new RotationOnlyAutoAlignCommand(bot, Math.toRadians(45)), // If false (Blue)
+                        () -> redTeam
+                ));
+        new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
+                .whileHeld(new ConditionalCommand(
+                        new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-22)),  // If true (Red)
+                        new RotationOnlyAutoAlignCommand(bot, Math.toRadians(22)), // If false (Blue)
+                        () -> redTeam
+                ));
         //pivot command
         new GamepadButton(driverGamepad, GamepadKeys.Button.B)
                 .toggleWhenPressed(new InstantCommand(()->pivot.far(), pivot), new InstantCommand(()->pivot.close(), pivot));
