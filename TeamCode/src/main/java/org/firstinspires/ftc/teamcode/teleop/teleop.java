@@ -193,13 +193,13 @@ public class teleop extends CommandOpMode {
         new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
                 .whileHeld(new ConditionalCommand(
                         new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-45)),  // If true (Red)
-                        new RotationOnlyAutoAlignCommand(bot, Math.toRadians(45)), // If false (Blue)
+                        new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-127)), // If false (Blue)
                         () -> redTeam
                 ));
         new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
                 .whileHeld(new ConditionalCommand(
                         new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-22)),  // If true (Red)
-                        new RotationOnlyAutoAlignCommand(bot, Math.toRadians(22)), // If false (Blue)
+                        new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-152)), // If false (Blue)
                         () -> redTeam
                 ));
         //pivot command
