@@ -104,9 +104,6 @@ public class setServo extends CommandOpMode {
         arm.setPosition(armPos);
         diffClawUp.setPositionI(diffPosIUp);
         diffClawUp.setPositionD(diffPosDUp);*/
-        pivot.setPosition(pivPos);
-        shooter.shootOn();
-        indexer.indexOn();
 
 
         telem.addData("status","start");

@@ -38,7 +38,7 @@ import org.firstinspires.ftc.teamcode.utils.PedroMirror;
 public class FarAutoBlue extends LinearOpMode {
 
     // --- BLUE TEAM POSES ---
-    public static Pose score = new Pose(55, 16, Math.toRadians(-67));
+    public static Pose score = new Pose(55, 16, Math.toRadians(-64));
     public static Pose start = new Pose(55, 8, Math.toRadians(-90));
     public static Pose preGrab = new Pose(55, 34, Math.toRadians(180));
     public static Pose grab = new Pose(20, 34, Math.toRadians(180));
@@ -56,9 +56,22 @@ public class FarAutoBlue extends LinearOpMode {
     private SequentialCommandGroup getFireSequence(Indexer indexer) {
         return new SequentialCommandGroup( //Ejecuta los siguientes comandos en orden
                 new InstantCommand(indexer::indexOn, indexer), //Prende el indexer para disparar
-                new WaitCommand(3000), //Espera 3 segundos
-                new InstantCommand(indexer::indexOff,indexer) //Apaga el indexer
-                );
+                new WaitCommand(500), //Espera 3 segundos
+                new InstantCommand(indexer::indexOff,indexer), //Apaga el indexer
+                new WaitCommand(750), //Espera 3 segundos
+                new InstantCommand(indexer::indexOn,indexer),
+                new WaitCommand(1750), //Espera 3 segundos
+                new InstantCommand(indexer::indexOff,indexer)
+        );
+    }
+    private SequentialCommandGroup lastFireSequence(Indexer indexer) {
+        return new SequentialCommandGroup( //Ejecuta los siguientes comandos en orden
+                new InstantCommand(indexer::indexOn, indexer), //Prende el indexer para disparar
+                new WaitCommand(500), //Espera 3 segundos
+                new InstantCommand(indexer::indexOff,indexer), //Apaga el indexer
+                new WaitCommand(750), //Espera 3 segundos
+                new InstantCommand(indexer::indexOn,indexer)
+        );
     }
     private SequentialCommandGroup getScoringPath(Follower f){
         return new SequentialCommandGroup(
@@ -141,13 +154,13 @@ public class FarAutoBlue extends LinearOpMode {
                                         .build()
                                 ),
                                 new WaitCommand(500),
-                                new InstantCommand(indexer::indexOn,indexer)
+                                lastFireSequence(indexer)
                         )
                 )
         );
         auto.addCommands(
                 new RunCommand(() -> intake.setPower(1), intake),
-                new RunCommand(() -> shooter.setVelocity(1475), shooter)
+                new RunCommand(() -> shooter.setVelocity(1425), shooter)
         );
 
         waitForStart();

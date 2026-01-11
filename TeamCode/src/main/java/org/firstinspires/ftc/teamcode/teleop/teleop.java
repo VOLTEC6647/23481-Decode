@@ -7,13 +7,11 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
+import com.arcrobotics.ftclib.command.button.Button;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -21,17 +19,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Bot;
-import org.firstinspires.ftc.teamcode.commands.PositionHoldCommand;
 import org.firstinspires.ftc.teamcode.commands.RotationOnlyAutoAlignCommand;
-import org.firstinspires.ftc.teamcode.pedropathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Indexer;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
-import org.firstinspires.ftc.teamcode.subsystems.MotorTest;
 import org.firstinspires.ftc.teamcode.subsystems.NewElevator;
 import org.firstinspires.ftc.teamcode.subsystems.Pivot;
-import org.firstinspires.ftc.teamcode.subsystems.ServoTest;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 
 import java.io.File;
@@ -49,7 +42,7 @@ public class teleop extends CommandOpMode {
     private Intake intake;
     private Indexer indexer;
     private NewElevator elevator;
-    boolean redTeam = false;
+    public boolean redTeam = false;
     //private Turret turret;
     /*private DiffClaw dClaw;
     private DiffClawUp diffClawUp;
@@ -100,11 +93,6 @@ public class teleop extends CommandOpMode {
             double currentHeading = MecanumDrive.odo.getPosition().getHeading(AngleUnit.DEGREES);
             double newHeading = currentHeading;
 
-            if (team.equals("blue")) {
-                newHeading += 90;
-            } else if (team.equals("red")) {
-                newHeading -= 90;
-            }
 
             Pose2D currentPos = MecanumDrive.odo.getPosition();
             MecanumDrive.odo.setPosition(new Pose2D(DistanceUnit.MM, currentPos.getX(DistanceUnit.MM), currentPos.getY(DistanceUnit.MM), AngleUnit.DEGREES, newHeading));
@@ -171,7 +159,7 @@ public class teleop extends CommandOpMode {
 
         //shooter command
         new GamepadButton(driverGamepad, GamepadKeys.Button.A)
-                .whenPressed(new InstantCommand(()->shooter.setVelocity(1475),shooter));//,new InstantCommand(()->shooter.shootOff(),shooter)
+                .whenPressed(new InstantCommand(()->shooter.setVelocity(1400),shooter));//,new InstantCommand(()->shooter.shootOff(),shooter)
         new GamepadButton(driverGamepad, GamepadKeys.Button.Y)
                 .whenPressed(new InstantCommand(()->shooter.setVelocity(1190),shooter));
         //indexer command
@@ -190,25 +178,27 @@ public class teleop extends CommandOpMode {
         new GamepadButton(driverGamepad, GamepadKeys.Button.X)
                 .whenPressed(new InstantCommand(()-> MecanumDrive.odo.resetPosAndIMU()));
 
-        //change teams
-
         //heading lock
         //new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
         //        .whileHeld(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(225)));
         //new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
         //        .whileHeld(new RotationOnlyAutoAlignCommand(bot,follower,Math.toRadians(-225)));
 
+        //change teams
+        new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_RIGHT)
+                .toggleWhenPressed(this::changeToRed, this::changeToBlue);
+
         //auto-align
         if(redTeam){
             new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
-                    .whileHeld(new RotationOnlyAutoAlignCommand(bot,Math.toRadians(-135)));
+                    .whileHeld(new RotationOnlyAutoAlignCommand(bot,Math.toRadians(45)));
             new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
-                    .whileHeld(new RotationOnlyAutoAlignCommand(bot,Math.toRadians(-113)));
+                    .whileHeld(new RotationOnlyAutoAlignCommand(bot,Math.toRadians(22)));
         } else {
             new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
-                    .whileHeld(new RotationOnlyAutoAlignCommand(bot, Math.toRadians(135)));
+                    .whileHeld(new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-45)));
             new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
-                    .whileHeld(new RotationOnlyAutoAlignCommand(bot, Math.toRadians(113)));
+                    .whileHeld(new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-22)));
         }
         //pivot command
         new GamepadButton(driverGamepad, GamepadKeys.Button.B)
@@ -238,5 +228,10 @@ public class teleop extends CommandOpMode {
 
         telem.update();
     }
-
+    public void changeToRed() {
+        redTeam = true;
+    }
+    public void changeToBlue() {
+        redTeam = false;
+    }
 }

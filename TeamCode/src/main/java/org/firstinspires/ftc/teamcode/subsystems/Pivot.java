@@ -20,7 +20,7 @@ public class Pivot implements Subsystem {
         pivot.setPosition(0.23);
     }
     public void far(){
-        pivot.setPosition(0.4);
+        pivot.setPosition(0.42);
     }
     public void setPosition(double setpoint){
         setPoint = setpoint;

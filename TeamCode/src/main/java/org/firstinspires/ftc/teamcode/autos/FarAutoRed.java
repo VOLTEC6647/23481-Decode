@@ -38,12 +38,12 @@ import org.firstinspires.ftc.teamcode.utils.PedroMirror;
 public class FarAutoRed extends LinearOpMode {
 
     // --- RED TEAM POSES ---
-    public static Pose start = new Pose(81, 14, Math.toRadians(-90));
-    public static Pose score = new Pose(81, 22, Math.toRadians(-110));
-    public static Pose preGrab = new Pose(55, 34, Math.toRadians(180));
-    public static Pose grab = new Pose(20, 34, Math.toRadians(180));
-    public static Pose preGrab2  = new Pose(55, 58.5, Math.toRadians(180));
-    public static Pose grab2  = new Pose(20, 58.5, Math.toRadians(180));
+    public static Pose start = new Pose(81, 12.5, Math.toRadians(-90));
+    public static Pose score = new Pose(81, 20.5, Math.toRadians(-110));
+    public static Pose preGrab = new Pose(89, 34, Math.toRadians(0));
+    public static Pose grab = new Pose(124, 34, Math.toRadians(0));
+    public static Pose preGrab2  = new Pose(89, 58.5, Math.toRadians(0));
+    public static Pose grab2  = new Pose(124, 58.5, Math.toRadians(0));
     private Bot bot;
     private MultipleTelemetry telem;
     private GamepadEx driverGamepad;
@@ -56,8 +56,21 @@ public class FarAutoRed extends LinearOpMode {
     private SequentialCommandGroup getFireSequence(Indexer indexer) {
         return new SequentialCommandGroup( //Ejecuta los siguientes comandos en orden
                 new InstantCommand(indexer::indexOn, indexer), //Prende el indexer para disparar
-                new WaitCommand(3000), //Espera 3 segundos
-                new InstantCommand(indexer::indexOff,indexer) //Apaga el indexer
+                new WaitCommand(500), //Espera 3 segundos
+                new InstantCommand(indexer::indexOff,indexer), //Apaga el indexer
+                new WaitCommand(750), //Espera 3 segundos
+                new InstantCommand(indexer::indexOn,indexer),
+                new WaitCommand(1750), //Espera 3 segundos
+                new InstantCommand(indexer::indexOff,indexer)
+        );
+    }
+    private SequentialCommandGroup lastFireSequence(Indexer indexer) {
+        return new SequentialCommandGroup( //Ejecuta los siguientes comandos en orden
+                new InstantCommand(indexer::indexOn, indexer), //Prende el indexer para disparar
+                new WaitCommand(500), //Espera 3 segundos
+                new InstantCommand(indexer::indexOff,indexer), //Apaga el indexer
+                new WaitCommand(750), //Espera 3 segundos
+                new InstantCommand(indexer::indexOn,indexer)
         );
     }
     private SequentialCommandGroup getScoringPath(Follower f){
@@ -89,10 +102,6 @@ public class FarAutoRed extends LinearOpMode {
         VoltageSensor vs = bot.hMap.voltageSensor.iterator().next();
 
         Follower f = Constants.createFollower(bot.hMap);
-            preGrab = PedroMirror.mirrorPose(preGrab);
-            grab = PedroMirror.mirrorPose(grab);
-            preGrab2  = PedroMirror.mirrorPose(preGrab2);
-            grab2  = PedroMirror.mirrorPose(grab2);
         f.setStartingPose(start);
         f.update();
 
@@ -145,13 +154,13 @@ public class FarAutoRed extends LinearOpMode {
                                         .build()
                                 ),
                                 new WaitCommand(500),
-                                new InstantCommand(indexer::indexOn,indexer)
+                                lastFireSequence(indexer)
                         )
                 )
         );
         auto.addCommands(
                 new RunCommand(() -> intake.setPower(1), intake),
-                new RunCommand(() -> shooter.setVelocity(1475), shooter)
+                new RunCommand(() -> shooter.setVelocity(1400), shooter)
         );
 
         waitForStart();
