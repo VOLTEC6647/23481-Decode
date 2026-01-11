@@ -44,6 +44,7 @@ public class FarAutoBlue extends LinearOpMode {
     public static Pose grab = new Pose(20, 34, Math.toRadians(180));
     public static Pose preGrab2  = new Pose(55, 58.5, Math.toRadians(180));
     public static Pose grab2  = new Pose(20, 58.5, Math.toRadians(180));
+    public static Pose end = new Pose(35.5,72,Math.toRadians(90));
     private Bot bot;
     private MultipleTelemetry telem;
     private GamepadEx driverGamepad;
@@ -62,15 +63,6 @@ public class FarAutoBlue extends LinearOpMode {
                 new InstantCommand(indexer::indexOn,indexer),
                 new WaitCommand(1750), //Espera 3 segundos
                 new InstantCommand(indexer::indexOff,indexer)
-        );
-    }
-    private SequentialCommandGroup lastFireSequence(Indexer indexer) {
-        return new SequentialCommandGroup( //Ejecuta los siguientes comandos en orden
-                new InstantCommand(indexer::indexOn, indexer), //Prende el indexer para disparar
-                new WaitCommand(500), //Espera 3 segundos
-                new InstantCommand(indexer::indexOff,indexer), //Apaga el indexer
-                new WaitCommand(750), //Espera 3 segundos
-                new InstantCommand(indexer::indexOn,indexer)
         );
     }
     private SequentialCommandGroup getScoringPath(Follower f){
@@ -154,7 +146,12 @@ public class FarAutoBlue extends LinearOpMode {
                                         .build()
                                 ),
                                 new WaitCommand(500),
-                                lastFireSequence(indexer)
+                                getFireSequence(indexer),
+                                new FollowPathCommand(f,f.pathBuilder()
+                                        .addPath(new BezierLine(score,end))
+                                        .setLinearHeadingInterpolation(score.getHeading(),end.getHeading())
+                                        .build()
+                                )
                         )
                 )
         );
