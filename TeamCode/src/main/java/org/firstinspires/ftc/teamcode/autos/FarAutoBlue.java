@@ -38,13 +38,13 @@ import org.firstinspires.ftc.teamcode.utils.PedroMirror;
 public class FarAutoBlue extends LinearOpMode {
 
     // --- BLUE TEAM POSES ---
-    public static Pose score = new Pose(55, 16, Math.toRadians(-64));
+    public static Pose score = new Pose(55, 16, Math.toRadians(-67));
     public static Pose start = new Pose(55, 8, Math.toRadians(-90));
     public static Pose preGrab = new Pose(55, 34, Math.toRadians(180));
     public static Pose grab = new Pose(20, 34, Math.toRadians(180));
     public static Pose preGrab2  = new Pose(55, 58.5, Math.toRadians(180));
     public static Pose grab2  = new Pose(20, 58.5, Math.toRadians(180));
-    public static Pose end = new Pose(35.5,72,Math.toRadians(90));
+    public static Pose end = new Pose(35.5,65,Math.toRadians(90));
     private Bot bot;
     private MultipleTelemetry telem;
     private GamepadEx driverGamepad;
@@ -120,7 +120,7 @@ public class FarAutoBlue extends LinearOpMode {
                                         .setLinearHeadingInterpolation(start.getHeading(), score.getHeading())
                                         .build()
                                 ),
-                                new WaitCommand(1500),
+                                new WaitCommand(2000),
                                 getFireSequence(indexer),
                                 getScoringPath(f),
                                 new WaitCommand(500),
@@ -157,7 +157,7 @@ public class FarAutoBlue extends LinearOpMode {
         );
         auto.addCommands(
                 new RunCommand(() -> intake.setPower(1), intake),
-                new RunCommand(() -> shooter.setVelocity(1425), shooter)
+                new RunCommand(() -> shooter.setVelocity(1325), shooter)
         );
 
         waitForStart();

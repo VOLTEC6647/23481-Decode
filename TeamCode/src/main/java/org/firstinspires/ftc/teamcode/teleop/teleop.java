@@ -160,12 +160,12 @@ public class teleop extends CommandOpMode {
 
         //shooter command
         new GamepadButton(driverGamepad, GamepadKeys.Button.A)
-                .whenPressed(new InstantCommand(()->shooter.setVelocity(1400),shooter));//,new InstantCommand(()->shooter.shootOff(),shooter)
+                .whenPressed(new InstantCommand(()->shooter.setVelocity(1325),shooter));//,new InstantCommand(()->shooter.shootOff(),shooter)
         new GamepadButton(driverGamepad, GamepadKeys.Button.Y)
-                .whenPressed(new InstantCommand(()->shooter.setVelocity(1190),shooter));
+                .whenPressed(new InstantCommand(()->shooter.setVelocity(1150),shooter));
         //indexer command
         new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
-                .whenActive(new RunCommand(()->indexer.setPower(0.4), indexer));
+                .whenActive(new RunCommand(()->indexer.setPower(0.5), indexer));
         new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)<0.1)
                 .whenActive(new RunCommand(()->indexer.indexOff(), indexer));
         new GamepadButton(operatorGamepad, GamepadKeys.Button.RIGHT_BUMPER)
@@ -192,14 +192,14 @@ public class teleop extends CommandOpMode {
                 }));
         new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
                 .whileHeld(new ConditionalCommand(
-                        new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-45)),  // If true (Red)
-                        new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-127)), // If false (Blue)
+                        new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-50)),  // If true (Red)
+                        new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-130)), // If false (Blue)
                         () -> redTeam
                 ));
         new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
                 .whileHeld(new ConditionalCommand(
-                        new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-22)),  // If true (Red)
-                        new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-152)), // If false (Blue)
+                        new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-24.5)),  // If true (Red)
+                        new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-154.5)), // If false (Blue)
                         () -> redTeam
                 ));
         //pivot command
@@ -227,6 +227,7 @@ public class teleop extends CommandOpMode {
         //periodicBindings();
         CommandScheduler.getInstance().run();
         bot.telem.addData("CurrentOdoAngle", MecanumDrive.odo.getPosition().getHeading(AngleUnit.DEGREES));
+        bot.telem.addData("Velocity",shooter.shooter.getVelocity());
 
         telem.update();
     }

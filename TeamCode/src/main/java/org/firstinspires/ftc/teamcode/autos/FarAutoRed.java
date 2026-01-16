@@ -120,7 +120,7 @@ public class FarAutoRed extends LinearOpMode {
                                         .setLinearHeadingInterpolation(start.getHeading(), score.getHeading())
                                         .build()
                                 ),
-                                new WaitCommand(1500),
+                                new WaitCommand(2000),
                                 getFireSequence(indexer),
                                 getScoringPath(f),
                                 new WaitCommand(500),
@@ -157,7 +157,7 @@ public class FarAutoRed extends LinearOpMode {
         );
         auto.addCommands(
                 new RunCommand(() -> intake.setPower(1), intake),
-                new RunCommand(() -> shooter.setVelocity(1400), shooter)
+                new RunCommand(() -> shooter.setVelocity(1325), shooter)
         );
 
         waitForStart();
