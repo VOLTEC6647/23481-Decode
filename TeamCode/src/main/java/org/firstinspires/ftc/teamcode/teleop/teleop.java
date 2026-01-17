@@ -42,7 +42,7 @@ public class teleop extends CommandOpMode {
     private Shooter shooter;
     private Intake intake;
     private Indexer indexer;
-    private NewElevator elevator;
+    //private NewElevator elevator;
     public boolean redTeam = false;
     //private Turret turret;
     /*private DiffClaw dClaw;
@@ -112,9 +112,6 @@ public class teleop extends CommandOpMode {
         pivot = new Pivot(bot);
         pivot.register();
 
-        elevator = new NewElevator(bot);
-        elevator.register();
-
         //turret = new Turret(bot);
         //turret.register();
 
@@ -165,15 +162,12 @@ public class teleop extends CommandOpMode {
                 .whenPressed(new InstantCommand(()->shooter.setVelocity(1150),shooter));
         //indexer command
         new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)>0.1)
-                .whenActive(new RunCommand(()->indexer.setPower(0.5), indexer));
+                .whenActive(new RunCommand(()->indexer.setPower(1), indexer));
         new Trigger(()-> driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER)<0.1)
                 .whenActive(new RunCommand(()->indexer.indexOff(), indexer));
         new GamepadButton(operatorGamepad, GamepadKeys.Button.RIGHT_BUMPER)
                 .whileHeld(new RunCommand(()->indexer.indexOut(), indexer))
                 .whenReleased(new InstantCommand(()->indexer.indexOff(), indexer));
-        //elevator command
-        new GamepadButton(operatorGamepad, GamepadKeys.Button.X)
-        .toggleWhenPressed(new InstantCommand(()-> elevator.goToHigh(), elevator), new InstantCommand(()-> elevator.goToLow(), elevator));
 
         //reset IMU
         new GamepadButton(driverGamepad, GamepadKeys.Button.X)

@@ -39,7 +39,7 @@ public class FarAutoRed extends LinearOpMode {
 
     // --- RED TEAM POSES ---
     public static Pose start = new Pose(81, 12.5, Math.toRadians(-90));
-    public static Pose score = new Pose(81, 20.5, Math.toRadians(-110));
+    public static Pose score = new Pose(81, 20.5, Math.toRadians(-113));
     public static Pose preGrab = new Pose(89, 34, Math.toRadians(0));
     public static Pose grab = new Pose(124, 34, Math.toRadians(0));
     public static Pose preGrab2  = new Pose(89, 58.5, Math.toRadians(0));
