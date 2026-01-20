@@ -38,12 +38,12 @@ import org.firstinspires.ftc.teamcode.utils.PedroMirror;
 public class CloseBlueAuto extends LinearOpMode {
 
     // --- BLUE TEAM POSES ---
-    public static Pose score = new Pose(58, 85.5, Math.toRadians(-41));
-    public static Pose start = new Pose(24, 119.5, Math.toRadians(-90));
-    public static Pose preGrab = new Pose(55, 84, Math.toRadians(180));
-    public static Pose grab = new Pose(25, 86, Math.toRadians(180));
-    public static Pose preGrab2  = new Pose(55, 60, Math.toRadians(180));
-    public static Pose grab2  = new Pose(20, 60, Math.toRadians(180));
+    public static Pose score = new Pose(60, 90, Math.toRadians(-45));
+    public static Pose start = new Pose(24, 121.5, Math.toRadians(-90));
+    public static Pose preGrab = new Pose(50, 84, Math.toRadians(180));
+    public static Pose grab = new Pose(17, 84, Math.toRadians(180));
+    public static Pose preGrab2  = new Pose(50, 59, Math.toRadians(180));
+    public static Pose grab2  = new Pose(20, 59, Math.toRadians(180));
     private Bot bot;
     private MultipleTelemetry telem;
     private GamepadEx driverGamepad;
@@ -58,7 +58,7 @@ public class CloseBlueAuto extends LinearOpMode {
                 new ParallelCommandGroup(
                         new InstantCommand(indexer::indexOn, indexer)
                 ),
-                new WaitCommand(3000),//5000 when nova
+                new WaitCommand(3000),
                 new ParallelCommandGroup(
                         new InstantCommand(indexer::indexOff, indexer)
                 )
@@ -122,7 +122,7 @@ public class CloseBlueAuto extends LinearOpMode {
                                 new WaitCommand(1500),
                                 getFireSequence(indexer),
                                 getScoringPath(f),
-                                new WaitCommand(2500),
+                                new WaitCommand(500),
                                 getFireSequence(indexer),
                                 new FollowPathCommand(f, f.pathBuilder()
                                         .addPath(new BezierLine(score, preGrab2))
