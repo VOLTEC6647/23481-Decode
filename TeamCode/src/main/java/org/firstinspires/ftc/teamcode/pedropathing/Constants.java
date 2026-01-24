@@ -43,13 +43,13 @@ public class Constants {
                     0,
                     0.1,
                     0.0005
-            ))//value for d in drive was 0.00035 and p was 0.5
+            ))//value for d in drive was 0.00035, p was 0.5, and f was 0.015
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(
                     1,
                     0,
                     0.0002,
                     0.6,
-                    0.015
+                    0.025
             ))
             .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(
                     0.02,
@@ -63,13 +63,13 @@ public class Constants {
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
-            .rightFrontMotorName("M1")
-            .rightRearMotorName("M3")
-            .leftRearMotorName("M2")
             .leftFrontMotorName("M0")
+            .rightFrontMotorName("M1")
+            .leftRearMotorName("M2")
+            .rightRearMotorName("M3")
             .leftFrontMotorDirection(DcMotorEx.Direction.REVERSE)
-            .leftRearMotorDirection(DcMotorEx.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorEx.Direction.FORWARD)
+            .leftRearMotorDirection(DcMotorEx.Direction.REVERSE)
             .rightRearMotorDirection(DcMotorEx.Direction.FORWARD)
             .xVelocity(70)
             .yVelocity(53);
