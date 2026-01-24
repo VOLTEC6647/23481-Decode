@@ -47,9 +47,9 @@ public class MecanumDrive extends SubsystemBase {
         //this.limelight = teleop.limelight;
 
         odo = bot.hMap.get(GoBildaPinpointDriver.class,"odo");
-        //odo.setOffsets(-82.66924000028, 110.830759999962, DistanceUnit.INCH);
-        //odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        //odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
+        odo.setOffsets(-82.66924000028, 110.830759999962, DistanceUnit.INCH);
+        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
         frontLeft = bot.hMap.get(DcMotorEx.class, "M0");
         frontRight = bot.hMap.get(DcMotorEx.class, "M1");
@@ -88,14 +88,14 @@ public class MecanumDrive extends SubsystemBase {
 
     public void drive(double xPower, double yPower, double rxInput) {
 
-        double rotationPower = rxInput * bot.rotMultiplier;
+        double rotationPower = -rxInput * bot.rotMultiplier;
         double x = -xPower;
         double botHeading = pose.getHeading();
 
         double rotX = x * Math.cos(-botHeading) - yPower * Math.sin(-botHeading);
         double rotY = x * Math.sin(-botHeading) + yPower * Math.cos(-botHeading);
 
-        rotX *= 1; // counteract imperfect strafe
+        rotX *= 1.1; // counteract imperfect strafe
 
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rotationPower), 1);
         double fl = (rotY + rotX + rotationPower) / denominator;

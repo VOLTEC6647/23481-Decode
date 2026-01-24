@@ -38,10 +38,10 @@ import org.firstinspires.ftc.teamcode.utils.PedroMirror;
 public class CloseRedAuto extends LinearOpMode {
 
     // --- RED TEAM POSES ---
-    public static Pose score = new Pose(60, 90, Math.toRadians(-45));
+    public static Pose score = new Pose(84, 90, Math.toRadians(-135));
     public static Pose start = new Pose(120 , 121.5, Math.toRadians(-90));
     public static Pose preGrab = new Pose(94, 84, Math.toRadians(180));
-    public static Pose grab = new Pose(117, 84, Math.toRadians(180));
+    public static Pose grab = new Pose(127, 84, Math.toRadians(180));
     public static Pose preGrab2  = new Pose(94, 59, Math.toRadians(180));
     public static Pose grab2  = new Pose(124, 59, Math.toRadians(180));
     private Bot bot;
