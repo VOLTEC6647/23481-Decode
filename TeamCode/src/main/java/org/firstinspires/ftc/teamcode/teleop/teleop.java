@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.button.GamepadButton;
 import com.arcrobotics.ftclib.command.button.Trigger;
@@ -27,6 +28,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.subsystems.Stopper;
 
 import java.io.File;
 
@@ -42,6 +44,7 @@ public class teleop extends CommandOpMode {
     private Shooter shooter,shooter2;
     private Intake intake;
     private Indexer indexer;
+    private Stopper stopper;
     private Follower follower;
     public boolean redTeam = false;
     private boolean smartShooting = false;
@@ -110,6 +113,9 @@ public class teleop extends CommandOpMode {
 
         pivot = new Pivot(bot);
         pivot.register();
+
+        stopper = new Stopper(bot);
+        stopper.register();
 
 
         register(drive);
@@ -187,11 +193,15 @@ public class teleop extends CommandOpMode {
                         new RotationOnlyAutoAlignCommand(bot, Math.toRadians(-154.5)), // If false (Blue)
                         () -> redTeam
                 ));*/
-        //pivot command
+        //pivot toggle
         new GamepadButton(driverGamepad, GamepadKeys.Button.B)
                 .toggleWhenPressed(new InstantCommand(()->pivot.far(), pivot), new InstantCommand(()->pivot.close(), pivot));
 
-        //position move command
+        //stopper toggle
+        new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_UP)
+                .toggleWhenPressed(new InstantCommand(()->stopper.setPosition(1),stopper),new InstantCommand(()->stopper.setPosition(0),stopper));
+
+        //position move toggle
         new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
                 .toggleWhenPressed(new ConditionalCommand(
                         new RunCommand(() -> {
@@ -258,6 +268,13 @@ public class teleop extends CommandOpMode {
                 .whenPressed(new InstantCommand(() -> {
                     smartShooting = !smartShooting;
                 }));
+
+        //intake + indexer failsafe
+        new GamepadButton(operatorGamepad, GamepadKeys.Button.RIGHT_BUMPER)
+                .whileHeld(new ParallelCommandGroup(
+                        new RunCommand(()->intake.setPower(-1)),
+                        new RunCommand(()->indexer.setPower(-1))
+                ));
         /*
         while (opModeInInit()){
             telem.update();
