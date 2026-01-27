@@ -45,11 +45,11 @@ public class Constants {
                     0.0005
             ))//value for d in drive was 0.00035, p was 0.5, and f was 0.015
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(
-                    1,
+                    0.5,
                     0,
-                    0.0002,
+                    0.00035,
                     0.6,
-                    0.025
+                    0.015
             ))
             .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(
                     0.02,

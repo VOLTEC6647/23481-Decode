@@ -19,9 +19,9 @@ public class Stopper implements Subsystem {
         stopper.setPosition(setPoint);
     }
     public void pass(){
-        stopper.setPosition(0.4);
+        stopper.setPosition(0.75);
     }
     public void stop(){
-        stopper.setPosition(0);
+        stopper.setPosition(1);
     }
 }

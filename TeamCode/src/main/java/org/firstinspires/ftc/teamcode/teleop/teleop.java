@@ -188,11 +188,11 @@ public class teleop extends CommandOpMode {
                 ));*/
         //pivot toggle
         new GamepadButton(driverGamepad, GamepadKeys.Button.B)
-                .toggleWhenPressed(new InstantCommand(()->pivot.far(), pivot), new InstantCommand(()->pivot.close(), pivot));
+                .toggleWhenPressed(new InstantCommand(()->pivot.setPosition(.31), pivot), new InstantCommand(()->pivot.close(), pivot));
 
         //stopper toggle
         new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_UP)
-                .toggleWhenPressed(new InstantCommand(()->stopper.setPosition(1),stopper),new InstantCommand(()->stopper.setPosition(0.4),stopper));
+                .toggleWhenPressed(new InstantCommand(()->stopper.setPosition(1),stopper),new InstantCommand(()->stopper.setPosition(0.75),stopper));
 
         //position move toggle
         new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)

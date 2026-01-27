@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.autos;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import java.io.File;
@@ -10,9 +9,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
-import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -27,12 +24,10 @@ import org.firstinspires.ftc.teamcode.Bot;
 import org.firstinspires.ftc.teamcode.commands.Drawing;
 import org.firstinspires.ftc.teamcode.commands.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.pedropathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.Indexer;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.Stopper;
-import org.firstinspires.ftc.teamcode.utils.PedroMirror;
 
 
 @Config
@@ -59,24 +54,14 @@ public class FarAutoRed extends LinearOpMode {
     private SequentialCommandGroup getFireSequence(Stopper stopper) {
         return new SequentialCommandGroup(
                 new InstantCommand(stopper::pass,stopper),
-                new WaitCommand(2000),
+                new WaitCommand(3000),
                 new InstantCommand(stopper::stop,stopper)
         );
     }
     private RunCommand shoot(Shooter shooter){
         return new RunCommand(() -> {
             double currentVel = shooter.shooter.getVelocity();
-            if (Math.abs(currentVel - 1190) < 40) {
-                intake.setPower(1);
-            } else {
-                intake.setPower(0);
-            }
-        }, intake);
-    }
-    private RunCommand shoot2(Shooter shooter2){
-        return new RunCommand(() -> {
-            double currentVel = shooter.shooter.getVelocity();
-            if (Math.abs(currentVel - 1190) < 40) {
+            if (Math.abs(currentVel - 1350) < 40) {
                 intake.setPower(1);
             } else {
                 intake.setPower(0);
@@ -120,13 +105,16 @@ public class FarAutoRed extends LinearOpMode {
 
         stopper = new Stopper(bot);
         stopper.register();
+        stopper.stop();
 
         shooter = new Shooter(hardwareMap,telemetry);
         shooter.register();
+        shooter2 = new Shooter(hardwareMap,telemetry);
+        shooter2.register();
 
         pivot = new Pivot(bot);
         pivot.register();
-        pivot.far();
+        pivot.setPosition(.35);
 
 
         ParallelDeadlineGroup auto = new ParallelDeadlineGroup(
@@ -175,7 +163,8 @@ public class FarAutoRed extends LinearOpMode {
         );
         auto.addCommands(
                 shoot(shooter),
-                new RunCommand(()-> shooter2.setVelocity2(1325), shooter2)
+                new RunCommand(()->shooter.setVelocity(1350),shooter),
+                new RunCommand(()->shooter2.setVelocity2(1350),shooter2)
         );
 
         waitForStart();

@@ -15,10 +15,10 @@ public class Shooter extends SubsystemBase {
     public DcMotorEx shooter,shooter2;
     @Config
     public static class ShooterPIDF{
-        public static double kp = 325;//21880909
+        public static double kp = 350;//21880909  325
         public static double ki = 0;
-        public static double kd = 1;
-        public static double kf = 22.5;
+        public static double kd = 0.25; //1
+        public static double kf = 17.5; //22.5
     }
     private MultipleTelemetry telemetry;
 //400,0,2.5,15
