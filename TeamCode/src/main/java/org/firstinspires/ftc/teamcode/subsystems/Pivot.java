@@ -12,7 +12,7 @@ public class Pivot implements Subsystem {
     public Pivot(Bot bot){
 
         pivot = bot.hMap.get(Servo.class,"pivot");
-        pivot.setPosition(0.42);
+        pivot.setPosition(1);
     }
     public void close(){
         pivot.setPosition(0.23);

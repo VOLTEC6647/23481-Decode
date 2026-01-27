@@ -43,12 +43,12 @@ public class teleop extends CommandOpMode {
     private Pivot pivot;
     private Shooter shooter,shooter2;
     private Intake intake;
-    private Indexer indexer;
+    //private Indexer indexer;
     private Stopper stopper;
     private Follower follower;
     public boolean redTeam = false;
     private boolean smartShooting = false;
-    private final double VELOCITY_TOLERANCE = 40;
+    private final double  VELOCITY_TOLERANCE = 40;
     public static Pose closeBlue = new Pose(60, 90, Math.toRadians(-45));
     public static Pose closeRed = new Pose(84, 90, Math.toRadians(-135));
     public static Pose farRed = new Pose(81, 20.5, Math.toRadians(-113));
@@ -108,9 +108,6 @@ public class teleop extends CommandOpMode {
         intake = new Intake(bot);
         intake.register();
 
-        indexer = new Indexer(bot);
-        indexer.register();
-
         pivot = new Pivot(bot);
         pivot.register();
 
@@ -147,12 +144,10 @@ public class teleop extends CommandOpMode {
                             double currentVel = shooter.shooter.getVelocity();
                             if (Math.abs(currentVel - 1500) < VELOCITY_TOLERANCE) {
                                 intake.setPower(1);
-                                indexer.setPower(1);
                             } else {
                                 intake.setPower(0);
-                                indexer.setPower(0);
                             }
-                        }, intake,indexer),
+                        }, intake),
                         new RunCommand(() ->{
                             intake.setPower(1);
                         },intake),
@@ -166,19 +161,17 @@ public class teleop extends CommandOpMode {
                             double currentVel = shooter.shooter.getVelocity();
                             if (Math.abs(currentVel - 1190) < VELOCITY_TOLERANCE) {
                                 intake.setPower(1);
-                                indexer.setPower(1);
                             } else {
                                 intake.setPower(0);
-                                indexer.setPower(0);
                             }
-                        }, intake,indexer),
+                        }, intake),
                         new RunCommand(() ->{
-                            indexer.setPower(1);
-                        },indexer),
+                            intake.setPower(1);
+                        },intake),
                         ()->smartShooting
                 ));
         new Trigger(() -> (driverGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) < 0.1))
-                .whenActive(new InstantCommand(()->indexer.setPower(0),indexer));
+                .whenActive(new InstantCommand(()->intake.setPower(0),intake));
 
         //rotation auto-align command
         /*new GamepadButton(driverGamepad, GamepadKeys.Button.LEFT_BUMPER)
@@ -199,7 +192,7 @@ public class teleop extends CommandOpMode {
 
         //stopper toggle
         new GamepadButton(driverGamepad, GamepadKeys.Button.DPAD_UP)
-                .toggleWhenPressed(new InstantCommand(()->stopper.setPosition(1),stopper),new InstantCommand(()->stopper.setPosition(0),stopper));
+                .toggleWhenPressed(new InstantCommand(()->stopper.setPosition(1),stopper),new InstantCommand(()->stopper.setPosition(0.4),stopper));
 
         //position move toggle
         new GamepadButton(driverGamepad, GamepadKeys.Button.RIGHT_BUMPER)
@@ -272,8 +265,8 @@ public class teleop extends CommandOpMode {
         //intake + indexer failsafe
         new GamepadButton(operatorGamepad, GamepadKeys.Button.RIGHT_BUMPER)
                 .whileHeld(new ParallelCommandGroup(
-                        new RunCommand(()->intake.setPower(-1)),
-                        new RunCommand(()->indexer.setPower(-1))
+                        new RunCommand(()->intake.setPower(-1))
+                        //new RunCommand(()->indexer.setPower(-1))
                 ));
         /*
         while (opModeInInit()){

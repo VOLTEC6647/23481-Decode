@@ -31,6 +31,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Indexer;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Pivot;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.subsystems.Stopper;
 import org.firstinspires.ftc.teamcode.utils.PedroMirror;
 
 
@@ -51,20 +52,36 @@ public class FarAutoRed extends LinearOpMode {
     private GamepadEx driverGamepad;
     private GamepadEx operatorGamepad;
     private Intake intake;
-    private Indexer indexer;
-    private Shooter shooter;
+    private Shooter shooter,shooter2;
     private Pivot pivot;
+    private Stopper stopper;
 
-    private SequentialCommandGroup getFireSequence(Indexer indexer) {
-        return new SequentialCommandGroup( //Ejecuta los siguientes comandos en orden
-                new InstantCommand(indexer::indexOn, indexer), //Prende el indexer para disparar
-                new WaitCommand(500), //Espera 3 segundos
-                new InstantCommand(indexer::indexOff,indexer), //Apaga el indexer
-                new WaitCommand(750), //Espera 3 segundos
-                new InstantCommand(indexer::indexOn,indexer),
-                new WaitCommand(1750), //Espera 3 segundos
-                new InstantCommand(indexer::indexOff,indexer)
+    private SequentialCommandGroup getFireSequence(Stopper stopper) {
+        return new SequentialCommandGroup(
+                new InstantCommand(stopper::pass,stopper),
+                new WaitCommand(2000),
+                new InstantCommand(stopper::stop,stopper)
         );
+    }
+    private RunCommand shoot(Shooter shooter){
+        return new RunCommand(() -> {
+            double currentVel = shooter.shooter.getVelocity();
+            if (Math.abs(currentVel - 1190) < 40) {
+                intake.setPower(1);
+            } else {
+                intake.setPower(0);
+            }
+        }, intake);
+    }
+    private RunCommand shoot2(Shooter shooter2){
+        return new RunCommand(() -> {
+            double currentVel = shooter.shooter.getVelocity();
+            if (Math.abs(currentVel - 1190) < 40) {
+                intake.setPower(1);
+            } else {
+                intake.setPower(0);
+            }
+        }, intake);
     }
     private SequentialCommandGroup getScoringPath(Follower f){
         return new SequentialCommandGroup(
@@ -101,8 +118,8 @@ public class FarAutoRed extends LinearOpMode {
         intake = new Intake(bot);
         intake.register();
 
-        indexer = new Indexer(bot);
-        indexer.register();
+        stopper = new Stopper(bot);
+        stopper.register();
 
         shooter = new Shooter(hardwareMap,telemetry);
         shooter.register();
@@ -122,10 +139,10 @@ public class FarAutoRed extends LinearOpMode {
                                         .build()
                                 ),
                                 new WaitCommand(2000),
-                                getFireSequence(indexer),
+                                getFireSequence(stopper),
                                 getScoringPath(f),
                                 new WaitCommand(500),
-                                getFireSequence(indexer),
+                                getFireSequence(stopper),
                                 new FollowPathCommand(f, f.pathBuilder()
                                         .addPath(new BezierLine(score, preGrab2))
                                         .setLinearHeadingInterpolation(score.getHeading(), preGrab2.getHeading())
@@ -147,7 +164,7 @@ public class FarAutoRed extends LinearOpMode {
                                         .build()
                                 ),
                                 new WaitCommand(500),
-                                getFireSequence(indexer),
+                                getFireSequence(stopper),
                                 new FollowPathCommand(f,f.pathBuilder()
                                         .addPath(new BezierLine(score,end))
                                         .setLinearHeadingInterpolation(score.getHeading(),end.getHeading())
@@ -157,8 +174,8 @@ public class FarAutoRed extends LinearOpMode {
                 )
         );
         auto.addCommands(
-                new RunCommand(() -> intake.setPower(1), intake),
-                new RunCommand(() -> shooter.setVelocity(1325), shooter)
+                shoot(shooter),
+                new RunCommand(()-> shooter2.setVelocity2(1325), shooter2)
         );
 
         waitForStart();
